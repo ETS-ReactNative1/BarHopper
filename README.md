@@ -1,24 +1,17 @@
 # BarHopper
-Capstone Project 
+
+Capstone Project
 
 ## Setup Locally
 
 ### If this is your first time running the application:
-Install Home Brew
-`brew install node`
-`brew install watchman`
 
-Install XCode CLI and iOS 14.5 Simulator using the XCode application
+Install the Expo CLI
+`yarn global add expo-cli`
 
-Install CocoaPods
-`sudo gem install cocoapods`
+Install Dependecies
+`yarn install`
 
-### Running the app for Android
-* Have an Android emulator running (quickest way to get started), or a device connected.
-* cd "/Users/willamderoberts/BarHopper/BarHopper" && npx react-native run-android
-
-## Running the app for iOS
-Start the app
-`cd "/Users/willamderoberts/BarHopper/BarHopper" && npx react-native run-ios`
-
-You should see the app running in the iOS Simulator
+Start the App
+`yarn start`
+The Expo dev tools will open in a browser tab. From there you can select `Run on an iOS simulator` to view how the application will look on an iPhone or `Run in web browser` to use chrome devtools
