@@ -11,6 +11,7 @@ import {
 	DarkTheme
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as React from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
 
@@ -83,9 +84,14 @@ function BottomTabNavigator() {
 				component={RecommendationScreen}
 				options={({ navigation }) => ({
 					title: 'Recommendations',
-					tabBarIcon: ({ color }) => (
-						<TabBarIcon name="code" color={color} />
+					tabBarIcon: ({ color, size }) => (
+						<MaterialCommunityIcons
+							name="home"
+							color={color}
+							size={size}
+						/>
 					),
+					tabBarLabelPosition: 'below-icon',
 					headerRight: () => (
 						<Pressable
 							onPress={() => navigation.navigate('Modal')}
@@ -108,8 +114,12 @@ function BottomTabNavigator() {
 				component={MapScreen}
 				options={{
 					title: 'Map',
-					tabBarIcon: ({ color }) => (
-						<TabBarIcon name="code" color={color} />
+					tabBarIcon: ({ color, size }) => (
+						<MaterialCommunityIcons
+							name="map"
+							color={color}
+							size={size}
+						/>
 					)
 				}}
 			/>
@@ -118,8 +128,12 @@ function BottomTabNavigator() {
 				component={FiltersScreen}
 				options={{
 					title: 'Filters',
-					tabBarIcon: ({ color }) => (
-						<TabBarIcon name="code" color={color} />
+					tabBarIcon: ({ color, size }) => (
+						<MaterialCommunityIcons
+							name="filter"
+							color={color}
+							size={size}
+						/>
 					)
 				}}
 			/>
@@ -128,8 +142,12 @@ function BottomTabNavigator() {
 				component={AccountScreen}
 				options={{
 					title: 'Account',
-					tabBarIcon: ({ color }) => (
-						<TabBarIcon name="code" color={color} />
+					tabBarIcon: ({ color, size }) => (
+						<MaterialCommunityIcons
+							name="account-circle"
+							color={color}
+							size={size}
+						/>
 					)
 				}}
 			/>
