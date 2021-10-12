@@ -1,19 +1,28 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
+import CardCarousel from '../components/CardCarousel';
 
 export default function RecommendationScreen({ navigation }) {
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Tab One</Text>
-			<View
-				style={styles.separator}
-				lightColor="#eee"
-				darkColor="rgba(255,255,255,0.1)"
-			/>
-			<EditScreenInfo path="/screens/RecommendationScreen.jsx" />
+			<ScrollView style={{ flex: 1 }}>
+				<CardCarousel header="Near You" subheader="Hoboken, NJ" />
+
+				<CardCarousel
+					header="Picked For You"
+					subheader="Because you liked Dirty Oscar's"
+				/>
+
+				<CardCarousel header="Short Line" subheader="Hoboken, NJ" />
+
+				<CardCarousel
+					header="Vibes You Like"
+					subheader="You're into Country"
+				/>
+			</ScrollView>
 		</View>
 	);
 }
