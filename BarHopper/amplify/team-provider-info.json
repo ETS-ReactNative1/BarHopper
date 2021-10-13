@@ -10,6 +10,14 @@
       "StackName": "amplify-barhopper-dev-105020",
       "StackId": "arn:aws:cloudformation:us-east-1:590272945317:stack/amplify-barhopper-dev-105020/e4807c70-2c34-11ec-ba95-1251459fc8eb",
       "AmplifyAppId": "d2gr1iwano51nd"
+    },
+    "categories": {
+      "function": {
+        "bars": {
+          "deploymentBucketName": "amplify-barhopper-dev-105020-deployment",
+          "s3Key": "amplify-builds/bars-7472554b662f34334746-build.zip"
+        }
+      }
     }
   }
 }
