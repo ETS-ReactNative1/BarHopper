@@ -1,0 +1,35 @@
+{
+  "paths": [
+    {
+      "name": "/items",
+      "lambdaFunction": "bars",
+      "privacy": {
+        "open": true
+      },
+      "policyResourceName": "/items"
+    }
+  ],
+  "resourceName": "Bars",
+  "apiName": "Bars",
+  "functionArns": [
+    {
+      "lambdaFunction": "bars"
+    }
+  ],
+  "privacy": {
+    "auth": 0,
+    "unauth": 0,
+    "authRoleName": "amplify-barhopper-dev-105020-authRole",
+    "unAuthRoleName": "amplify-barhopper-dev-105020-unauthRole"
+  },
+  "dependsOn": [
+    {
+      "category": "function",
+      "resourceName": "bars",
+      "attributes": [
+        "Name",
+        "Arn"
+      ]
+    }
+  ]
+}
