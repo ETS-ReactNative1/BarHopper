@@ -8,13 +8,7 @@ import useColorScheme from './hooks/useColorScheme';
 
 export default function App() {
 	const colorScheme = useColorScheme();
-	return (
-		// <View style={styles.container}>
-		// 	<Text>This works!!!!!</Text>
-		// 	<StatusBar style="auto" />
-		// </View>
-		<Navigation colorScheme={colorScheme} />
-	);
+	return <Navigation colorScheme={colorScheme} />;
 }
 
 const styles = StyleSheet.create({
