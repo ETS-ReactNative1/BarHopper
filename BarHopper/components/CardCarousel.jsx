@@ -13,6 +13,7 @@ import {
 import Carousel from 'react-native-anchor-carousel';
 import BarHopperLogo from '../assets/bar-hopper-logo.png';
 import TestData from './test-data/Bars';
+import { useNavigation } from '@react-navigation/native';
 
 const { width: windowWidth } = Dimensions.get('window');
 
@@ -24,15 +25,7 @@ const SEPARATOR_WIDTH = 10;
 const ShopCarousel = (props) => {
 	const { style } = props;
 	const carouselRef = useRef(null);
-
-	async function handleImHereClick(url) {
-		const supported = await Linking.canOpenURL(url);
-		if (supported) {
-			await Linking.openURL(url);
-		} else {
-			Alert.alert(`Don't know how to open this URL: ${url}`);
-		}
-	}
+	const navigation = useNavigation();
 
 	function renderHeader() {
 		return (
@@ -49,7 +42,7 @@ const ShopCarousel = (props) => {
 	}
 
 	function renderItem({ item, index }) {
-		const { image, title, url } = item;
+		const { name, image, _id } = item;
 		return (
 			<Pressable
 				activeOpacity={1}
@@ -62,7 +55,7 @@ const ShopCarousel = (props) => {
 				<View style={styles.lowerContainer}>
 					<View style={styles.lowerLeft}>
 						<Text style={styles.titleText} numberOfLines={1}>
-							{title}
+							{name}
 						</Text>
 						<Text style={styles.descriptionText} numberOfLines={1}>
 							0.3 miles away
@@ -70,9 +63,17 @@ const ShopCarousel = (props) => {
 					</View>
 					<TouchableOpacity
 						style={styles.button}
-						onPress={() => handleImHereClick(url)}
+						onPress={() =>
+							navigation.navigate('BarInfo', {
+								uuid: { _id },
+								name: name,
+								otherParam: 'anything you want here'
+							})
+						}
 					>
-						<Text style={styles.buttonText}>I'm Here</Text>
+						<Text style={styles.buttonText}>
+							Check out this bar
+						</Text>
 					</TouchableOpacity>
 				</View>
 			</Pressable>
@@ -83,7 +84,7 @@ const ShopCarousel = (props) => {
 		<View style={styles.container}>
 			{renderHeader()}
 			<Carousel
-				keyExtractor={(item) => item?.id}
+				keyExtractor={(item) => item?._id}
 				style={[styles.carousel, style]}
 				ref={carouselRef}
 				data={TestData}

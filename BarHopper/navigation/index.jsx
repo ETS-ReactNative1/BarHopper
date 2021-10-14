@@ -23,6 +23,7 @@ import RecommendationScreen from '../screens/RecommendationScreen';
 import MapScreen from '../screens/MapScreen';
 import FiltersScreen from '../screens/FiltersScreen';
 import AccountScreen from '../screens/AccountScreen';
+import BarInfoScreen from '../screens/BarInfoScreen';
 
 // import LinkingConfiguration from './LinkingConfiguration';
 
@@ -58,6 +59,7 @@ function RootNavigator() {
 			/>
 			<Stack.Group screenOptions={{ presentation: 'modal' }}>
 				<Stack.Screen name="Modal" component={ModalScreen} />
+				<Stack.Screen name="BarInfo" component={BarInfoScreen} />
 			</Stack.Group>
 		</Stack.Navigator>
 	);
@@ -90,22 +92,6 @@ function BottomTabNavigator() {
 							color={color}
 							size={size}
 						/>
-					),
-					tabBarLabelPosition: 'below-icon',
-					headerRight: () => (
-						<Pressable
-							onPress={() => navigation.navigate('Modal')}
-							style={({ pressed }) => ({
-								opacity: pressed ? 0.5 : 1
-							})}
-						>
-							<FontAwesome
-								name="info-circle"
-								size={25}
-								color={Colors[colorScheme].text}
-								style={{ marginRight: 15 }}
-							/>
-						</Pressable>
 					)
 				})}
 			/>
@@ -140,7 +126,7 @@ function BottomTabNavigator() {
 			<BottomTab.Screen
 				name="Account"
 				component={AccountScreen}
-				options={{
+				options={({ navigation }) => ({
 					title: 'Account',
 					tabBarIcon: ({ color, size }) => (
 						<MaterialCommunityIcons
@@ -148,8 +134,24 @@ function BottomTabNavigator() {
 							color={color}
 							size={size}
 						/>
+					),
+					tabBarLabelPosition: 'below-icon',
+					headerRight: () => (
+						<Pressable
+							onPress={() => navigation.navigate('Modal')}
+							style={({ pressed }) => ({
+								opacity: pressed ? 0.5 : 1
+							})}
+						>
+							<FontAwesome
+								name="info-circle"
+								size={25}
+								color={Colors[colorScheme].text}
+								style={{ marginRight: 15 }}
+							/>
+						</Pressable>
 					)
-				}}
+				})}
 			/>
 		</BottomTab.Navigator>
 	);
