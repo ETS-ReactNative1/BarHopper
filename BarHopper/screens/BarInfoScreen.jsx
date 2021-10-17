@@ -1,19 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
-import { Platform, Image, StyleSheet, Dimensions } from 'react-native';
-
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
-import { Rating } from 'react-native-ratings';
+import {
+	Platform,
+	Image,
+	ScrollView,
+	SectionList,
+	StyleSheet,
+	Dimensions
+} from 'react-native';
+import { Divider, ListItem, Icon } from 'react-native-elements';
+import { SafeAreaView, Text, View } from '../components/Themed';
 
 const { width: windowWidth } = Dimensions.get('window');
 const ITEM_WIDTH = 0.5 * windowWidth;
-const RATING_IMAGE = require('../assets/bar-hopper-logo.png');
-
-//TODO abstract to 'are you here' page
-function ratingCompleted(rating) {
-	console.log('Rating is: ' + rating);
-}
 
 export default function BarInfoScreen({ route }) {
 	const { data } = route.params;
@@ -27,52 +26,121 @@ export default function BarInfoScreen({ route }) {
 		phone_number,
 		vaccination_protocols
 	} = data;
-	// console.log(data.item);
+
+	//temp list to validate layout; this should be deleted during integration
+	const DATA = [
+		{
+			title: 'Line',
+			data: ['Long']
+		},
+		{
+			title: 'Music',
+			data: ['Hip Hop', 'Dubstep', 'R&B']
+		}
+	];
+
+	// temp object, should be deleted during integration
+	const Item = ({ title }) => (
+		<View style={styles.item}>
+			<Text style={styles.barAttribute}>{title}</Text>
+		</View>
+	);
 
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>{name}</Text>
-			<Rating
-				type="custom"
-				ratingImage={RATING_IMAGE}
-				ratingColor="#3498db"
-				ratingBackgroundColor="#c8c7c8"
-				ratingCount={5}
-				imageSize={30}
-				onFinishRating={ratingCompleted}
-				style={{ paddingVertical: 10 }}
-				defaultRating={4.5}
-			/>
-			<Image source={{ uri: image }} style={styles.storefront} />
-
-			<Text>{location}</Text>
-			<Text>
-				{open_time} - {close_time}
+		<SafeAreaView style={styles.container}>
+			<Text style={styles.title} numberOfLines={1}>
+				{name}
 			</Text>
-			<Text>{phone_number}</Text>
-			<Text>{vaccination_protocols}</Text>
-			<View
-				style={styles.separator}
-				lightColor="#eee"
-				darkColor="rgba(255,255,255,0.1)"
-			/>
-			<EditScreenInfo path="/screens/ModalScreen.tsx" />
 
-			{/* Use a light status bar on iOS to account for the black space above the modal */}
+			<View style={styles.vertical}>
+				<View style={{ marginHorizontal: 10 }}>
+					<Text style={styles.subHeader}>Hours</Text>
+					<Text style={styles.barMetaData}>
+						{open_time} - {close_time}
+					</Text>
+				</View>
+
+				<Divider orientation="vertical" width={2} />
+				<View style={{ marginHorizontal: 10 }}>
+					<Text style={styles.subHeader}>Distance</Text>
+					<Text style={styles.barMetaData}>0.2 Miles Away</Text>
+				</View>
+
+				<Divider orientation="vertical" width={2} />
+				<View style={{ marginHorizontal: 10 }}>
+					<Text style={styles.subHeader}>Vibe</Text>
+					<Text style={styles.barMetaData}>Dive Bar</Text>
+				</View>
+			</View>
+
+			<View
+				style={{
+					flexDirection: 'row',
+					justifyContent: 'space-between'
+				}}
+			>
+				<Image source={{ uri: image }} style={styles.storefront} />
+				<View
+					style={{
+						flex: 1,
+						flexDirection: 'column',
+						alignItems: 'center',
+						justifyContent: 'center'
+					}}
+				>
+					<Text style={styles.rating}>4.5/5</Text>
+				</View>
+			</View>
+			<View style={{ alignSelf: 'flex-start', marginHorizontal: 10 }}>
+				<Text style={styles.subHeader}>Address</Text>
+				<Text style={styles.barMetaData}>{location}</Text>
+				<Divider orientation="horizontal" width={1} />
+				<Text style={styles.subHeader}>Phone Number</Text>
+				<Text style={styles.barMetaData}>{phone_number}</Text>
+				<Divider orientation="horizontal" width={1} />
+				<Text style={styles.subHeader}>Covid Precautions</Text>
+				<Text style={styles.barMetaData}>{vaccination_protocols}</Text>
+			</View>
+
+			<View style={{ alignSelf: 'flex-start', margin: 10 }}>
+				<SectionList
+					sections={DATA}
+					keyExtractor={(item, index) => item + index}
+					renderItem={({ item }) => <Item title={item} />}
+					renderSectionHeader={({ section: { title } }) => (
+						<Text style={styles.subHeader}>{title}</Text>
+					)}
+				/>
+			</View>
+
 			<StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-		</View>
+		</SafeAreaView>
 	);
 }
 
 const styles = StyleSheet.create({
+	barAttribute: {
+		fontSize: 14
+	},
+	barMetaData: {
+		fontSize: 16
+	},
 	container: {
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center'
+		flexDirection: 'column',
+		alignItems: 'center'
 	},
 	title: {
-		fontSize: 20,
-		fontWeight: 'bold'
+		fontSize: 26,
+		fontWeight: 'bold',
+		marginBottom: 15
+	},
+	rating: {
+		fontSize: 30,
+		fontWeight: 'bold',
+		marginVertical: 20,
+		justifyContent: 'center',
+		alignItems: 'center'
 	},
 	separator: {
 		marginVertical: 30,
@@ -81,6 +149,17 @@ const styles = StyleSheet.create({
 	},
 	storefront: {
 		width: 0.5 * windowWidth,
-		height: ITEM_WIDTH
+		height: ITEM_WIDTH,
+		margin: 10
+	},
+	subHeader: {
+		fontSize: 12,
+		fontWeight: 'bold'
+	},
+	vertical: {
+		marginBottom: 10,
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-evenly'
 	}
 });

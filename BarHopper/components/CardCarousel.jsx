@@ -68,11 +68,13 @@ const ShopCarousel = (props) => {
 							>
 								<Badge
 									value="Dive Bar"
-									// style={styles.descriptionText}
+									badgeStyle={styles.vibeBadge}
+									textStyle={styles.badgeText}
 								/>
 								<Badge
 									value="0.3 miles away"
-									// style={styles.descriptionText}
+									badgeStyle={styles.vibeBadge}
+									textStyle={styles.badgeText}
 								/>
 							</View>
 						</View>
@@ -102,6 +104,11 @@ const ShopCarousel = (props) => {
 };
 
 const styles = StyleSheet.create({
+	badgeText: {
+		fontSize: 12,
+		fontWeight: 'bold',
+		color: '#1C2127'
+	},
 	container: {
 		backgroundColor: 'white',
 		alignItems: 'flex-start',
@@ -169,16 +176,6 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		color: '#585B60'
 	},
-	// footer: {
-	// 	borderTopWidth: StyleSheet.hairlineWidth,
-	// 	marginTop: 20,
-	// 	marginHorizontal: 10,
-	// 	borderColor: '#A0A0A0',
-	// 	flexDirection: 'row',
-	// 	width: '100%',
-	// 	justifyContent: 'space-around',
-	// 	padding: 10
-	// },
 	header: {
 		flexDirection: 'row',
 		justifyContent: 'center',
@@ -196,6 +193,10 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		fontWeight: 'bold',
 		color: '#1C2127'
+	},
+	vibeBadge: {
+		backgroundColor: 'ivory',
+		borderColor: 'black'
 	}
 });
 
