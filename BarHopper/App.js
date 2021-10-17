@@ -5,11 +5,21 @@ import { StyleSheet, Text, View } from 'react-native';
 import Navigation from './navigation';
 
 import useColorScheme from './hooks/useColorScheme';
+import Amplify, { Auth, Hub } from 'aws-amplify';
+import awsconfig from './aws-exports';
+Amplify.configure(awsconfig);
 
-export default function App() {
+import { withAuthenticator } from 'aws-amplify-react-native';
+
+const App = () => {
 	const colorScheme = useColorScheme();
-	return <Navigation colorScheme={colorScheme} />;
-}
+	return (
+		<>
+			{/* <button onClick={() => Auth.federatedSignIn({provider: 'Facebook'})}>Open Facebook</button> */}
+			<Navigation colorScheme={colorScheme} />
+		</>
+	)
+};
 
 const styles = StyleSheet.create({
 	container: {
@@ -19,3 +29,5 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	}
 });
+
+export default withAuthenticator(App);
