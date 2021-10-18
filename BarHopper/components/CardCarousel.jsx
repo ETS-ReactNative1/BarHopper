@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import {
 	StyleSheet,
 	Text,
-	ImageBackground,
 	TouchableOpacity,
 	View,
 	Dimensions,
@@ -11,7 +10,6 @@ import {
 	Linking,
 	Alert
 } from 'react-native';
-import { Badge } from 'react-native-elements';
 import Carousel from 'react-native-anchor-carousel';
 import BarHopperLogo from '../assets/bar-hopper-logo.png';
 import TestData from './test-data/Bars';
@@ -19,7 +17,9 @@ import { useNavigation } from '@react-navigation/native';
 
 const { width: windowWidth } = Dimensions.get('window');
 
-const ITEM_WIDTH = 0.5 * windowWidth;
+// This is example code taken from https://github.com/lehoangnam97/react-native-anchor-carousel and needs to be refactored
+
+const ITEM_WIDTH = 0.7 * windowWidth;
 const SEPARATOR_WIDTH = 10;
 
 const ShopCarousel = (props) => {
@@ -42,44 +42,40 @@ const ShopCarousel = (props) => {
 	}
 
 	function renderItem({ item, index }) {
-		const { name, image, _id, location, address } = item;
+		const { name, image, _id } = item;
 		return (
 			<Pressable
 				activeOpacity={1}
 				style={styles.item}
-				onPress={() =>
-					navigation.navigate('BarInfo', {
-						uuid: { _id },
-						data: item
-					})
-				}
+				onPress={() => {
+					carouselRef.current.scrollToIndex(index);
+				}}
 			>
-				<ImageBackground source={{ uri: image }} style={styles.image}>
-					<View style={styles.lowerContainer}>
-						<View>
-							<Text style={styles.titleText} numberOfLines={1}>
-								{name}
-							</Text>
-							<View
-								style={{
-									flexDirection: 'row',
-									justifyContent: 'space-between'
-								}}
-							>
-								<Badge
-									value="Dive Bar"
-									badgeStyle={styles.vibeBadge}
-									textStyle={styles.badgeText}
-								/>
-								<Badge
-									value="0.3 miles away"
-									badgeStyle={styles.vibeBadge}
-									textStyle={styles.badgeText}
-								/>
-							</View>
-						</View>
+				<Image source={{ uri: image }} style={styles.image} />
+				<View style={styles.lowerContainer}>
+					<View style={styles.lowerLeft}>
+						<Text style={styles.titleText} numberOfLines={1}>
+							{name}
+						</Text>
+						<Text style={styles.descriptionText} numberOfLines={1}>
+							0.3 miles away
+						</Text>
 					</View>
-				</ImageBackground>
+					<TouchableOpacity
+						style={styles.button}
+						onPress={() =>
+							navigation.navigate('BarInfo', {
+								uuid: { _id },
+								name: name,
+								otherParam: 'anything you want here'
+							})
+						}
+					>
+						<Text style={styles.buttonText}>
+							Check out this bar
+						</Text>
+					</TouchableOpacity>
+				</View>
 			</Pressable>
 		);
 	}
@@ -104,11 +100,6 @@ const ShopCarousel = (props) => {
 };
 
 const styles = StyleSheet.create({
-	badgeText: {
-		fontSize: 12,
-		fontWeight: 'bold',
-		color: '#1C2127'
-	},
 	container: {
 		backgroundColor: 'white',
 		alignItems: 'flex-start',
@@ -119,7 +110,7 @@ const styles = StyleSheet.create({
 	},
 	carousel: {
 		width: windowWidth,
-		height: ITEM_WIDTH,
+		height: ITEM_WIDTH + 100,
 		flexGrow: 0
 	},
 	item: {
@@ -144,16 +135,16 @@ const styles = StyleSheet.create({
 	lowerContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		padding: 12,
-		backgroundColor: `#b0e0e6a0`,
-		position: 'absolute',
-		bottom: 0,
-		width: '100%'
+		padding: 12
+	},
+	lowerLeft: {
+		width: '50%'
 	},
 	titleText: {
 		fontSize: 16,
 		fontWeight: 'bold',
-		color: '#1C2127'
+		color: '#1C2127',
+		marginTop: 4
 	},
 	descriptionText: {
 		fontSize: 14,
@@ -176,10 +167,20 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		color: '#585B60'
 	},
+	footer: {
+		borderTopWidth: StyleSheet.hairlineWidth,
+		marginTop: 20,
+		marginHorizontal: 10,
+		borderColor: '#A0A0A0',
+		flexDirection: 'row',
+		width: '100%',
+		justifyContent: 'space-around',
+		padding: 10
+	},
 	header: {
 		flexDirection: 'row',
 		justifyContent: 'center',
-		marginVertical: 10,
+		marginVertical: 20,
 		borderColor: '#A0A0A0',
 		paddingHorizontal: 10
 	},
@@ -193,10 +194,6 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		fontWeight: 'bold',
 		color: '#1C2127'
-	},
-	vibeBadge: {
-		backgroundColor: 'ivory',
-		borderColor: 'black'
 	}
 });
 
