@@ -4,7 +4,11 @@
  */
 
 import * as React from 'react';
-import { Text as DefaultText, View as DefaultView } from 'react-native';
+import {
+	Text as DefaultText,
+	View as DefaultView,
+	SafeAreaView as DefaultSafeAreaView
+} from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -35,4 +39,19 @@ export function View(props) {
 	);
 
 	return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export function SafeAreaView(props) {
+	const { style, lightColor, darkColor, ...otherProps } = props;
+	const backgroundColor = useThemeColor(
+		{ light: lightColor, dark: darkColor },
+		'background'
+	);
+
+	return (
+		<DefaultSafeAreaView
+			style={[{ backgroundColor }, style]}
+			{...otherProps}
+		/>
+	);
 }
