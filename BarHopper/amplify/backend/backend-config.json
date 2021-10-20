@@ -23,7 +23,7 @@
     }
   },
   "auth": {
-    "BarHopper": {
+    "barhopper14dec28f": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
