@@ -11,10 +11,10 @@ export default function MapScreen() {
 		<View style={styles.container}>
 			<MapView style={styles.map}
 			region={{
-				latitude: 42.882004,
-				longitude: 74.582748,
-				latitudeDelta: 0.0922,
-				longitudeDelta: 0.0421}}
+				latitude: 40.74708623964595,
+					longitude: -74.0258037865746,
+					latitudeDelta: 0.0922,
+					longitudeDelta: 0.0421}}
 			showsUserLocation={true}/>
 		</View>
 	);
