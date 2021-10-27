@@ -6,6 +6,7 @@ import { Text, View } from '../components/Themed';
 
 import MapView from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import * as Location from 'expo-location';
 
 export default function MapScreen() {
 
@@ -14,14 +15,26 @@ export default function MapScreen() {
 		longitude: -74.0258037865746
 	})
 
-	const [locationInfo, setLocationInfo] = React.useStat
+	const [locationInfo, setLocationInfo] = React.useState({
+		where: { latitude: null, longitude: null },
+		error: null
+	})
 
+	Location.installWebGeolocationPolyfill();
+	navigator.geolocation.getCurrentPosition(geoSuccess, geoFailure, { enableHighAccuracy: true, timeout: 20000 });
+
+	const geoSuccess = (position) => {
+		setLocationInfo({ latitude: position.coords.latitude, longitude: position.coords.longitude })
+	}
+	const geoFailure = (err) => {
+		setLocationInfo({ error: err.message })
+	}
 
 	var axios = require('axios');
 
 	var config = {
 		method: 'get',
-		url: 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=bar&location=40.74708623964595,-74.0258037865746&radius=500&key=',
+		url: 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=bar&location=${locationInfo.latitude}%2C${locationInfo.longitude}&radius=100&key=AIzaSyAO7pGJI9OW6a76Wo6nAoEkzlx3KUq80Ec',
 		headers: {}
 	};
 
