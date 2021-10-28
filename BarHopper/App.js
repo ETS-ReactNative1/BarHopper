@@ -5,10 +5,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import Navigation from './navigation';
 
 import useColorScheme from './hooks/useColorScheme';
-import Amplify from '@aws-amplify/core';
-import Auth from '@aws-amplify/auth';
+import Amplify, { Auth } from 'aws-amplify';
 import config from './aws-exports';
-Amplify.configure(config);
+Amplify.configure({
+    ...config,
+    Analytics: {
+      disabled: true
+    }
+});
 import { withAuthenticator } from 'aws-amplify-react-native';
 
 const App = () => {
