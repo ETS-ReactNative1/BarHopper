@@ -34,7 +34,7 @@ export default function MapScreen() {
 
 	var config = {
 		method: 'get',
-		url: 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=bar&location=${locationInfo.latitude}%2C${locationInfo.longitude}&radius=100&key=AIzaSyADaQtqQonJgl5UGWltQxWWU9qSYnK1EFM',
+		url: 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=bar&location=${locationInfo.latitude}%2C${locationInfo.longitude}&radius=100&key=',
 		headers: {}
 	};
 
@@ -62,7 +62,7 @@ export default function MapScreen() {
 					console.log(data, details);
 				}}
 				query={{
-					key: 'AIzaSyADaQtqQonJgl5UGWltQxWWU9qSYnK1EFM',
+					key: '',
 					language: 'en',
 					components: "country:us",
 					types: "establishments",
