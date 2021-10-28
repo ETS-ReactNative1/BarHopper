@@ -29,7 +29,7 @@ export default function MapScreen() {
 	const geoFailure = (err) => {
 		setLocationInfo({ error: err.message })
 	}
-	/*
+
 	var axios = require('axios');
 
 	var config = {
@@ -44,7 +44,7 @@ export default function MapScreen() {
 		})
 		.catch(function (error) {
 			console.log(error);
-		});*/
+		});
 
 	return (
 
