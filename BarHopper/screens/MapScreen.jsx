@@ -34,13 +34,13 @@ export default function MapScreen() {
 
 	var config = {
 		method: 'get',
-		url: 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=bar&location=${locationInfo.latitude}%2C${locationInfo.longitude}&radius=100&key=',
+		url: 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=bar&location=${locationInfo.latitude}%2C${locationInfo.longitude}&radius=100&key=AIzaSyADaQtqQonJgl5UGWltQxWWU9qSYnK1EFM',
 		headers: {}
 	};
 
 	axios(config)
 		.then(function (response) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response));
 		})
 		.catch(function (error) {
 			console.log(error);
