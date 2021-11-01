@@ -32,6 +32,7 @@
 		"react-dom": "16.13.1",
 		"react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
 		"react-native-anchor-carousel": "^4.0.1",
+		"react-native-bouncy-checkbox": "^2.1.7",
 		"react-native-elements": "^3.4.2",
 		"react-native-gesture-handler": "~1.10.2",
 		"react-native-google-places-autocomplete": "^2.4.1",
