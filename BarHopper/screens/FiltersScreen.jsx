@@ -20,7 +20,7 @@ const FiltersScreen = () => {
 		<View style={styles.container}>
 			<ScrollView style={{ flex: 1 }}>
 				<View style={{width: '100%', backgroundColor: '#009292', padding: 10, marginBottom: 10, marginTop: 10}}>
-					<Text style={styles.title}>Use Filters to find your crowd!</Text>
+					<Text style={styles.title}>Use Filters to Find Your Crowd!</Text>
 				</View>
 				<Text style={styles.heading}>LINE</Text>
 				<View style={styles.boxesView}>
