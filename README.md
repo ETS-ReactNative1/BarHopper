@@ -26,6 +26,8 @@ Install the Amplify CLI
 Connect to the backend enviornment
 `amplify pull --appId d2gr1iwano51nd --envName dev`
 
+Choose Javascript, then react-native
+
 ### Modifying the API
 
 Modify the HTTP methods in BarHopper/amplify/backend/function/bars/src/app.js
