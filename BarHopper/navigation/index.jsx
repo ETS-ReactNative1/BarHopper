@@ -17,13 +17,16 @@ import { ColorSchemeName, Pressable } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import ModalScreen from '../screens/ModalScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import RecommendationScreen from '../screens/RecommendationScreen';
 import MapScreen from '../screens/MapScreen';
 import FiltersScreen from '../screens/FiltersScreen';
 import AccountScreen from '../screens/AccountScreen';
 import BarInfoScreen from '../screens/BarInfoScreen';
+import SettingsScreen from '../screens/SettingsScreen';
+import NotificationsScreen from '../screens/NotificationsScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
 
 // import LinkingConfiguration from './LinkingConfiguration';
 
@@ -58,8 +61,11 @@ function RootNavigator() {
 				options={{ title: 'Oops!' }}
 			/>
 			<Stack.Group screenOptions={{ presentation: 'modal' }}>
-				<Stack.Screen name="Modal" component={ModalScreen} />
+				<Stack.Screen name="Profile" component={ProfileScreen} />
 				<Stack.Screen name="BarInfo" component={BarInfoScreen} />
+				<Stack.Screen name="Settings" component={SettingsScreen} />
+				<Stack.Screen name="Favorites" component={FavoritesScreen} />
+				<Stack.Screen name="Notifications" component={NotificationsScreen} />
 			</Stack.Group>
 		</Stack.Navigator>
 	);
@@ -138,7 +144,7 @@ function BottomTabNavigator() {
 					tabBarLabelPosition: 'below-icon',
 					headerRight: () => (
 						<Pressable
-							onPress={() => navigation.navigate('Modal')}
+							onPress={() => navigation.navigate('Profile')}
 							style={({ pressed }) => ({
 								opacity: pressed ? 0.5 : 1
 							})}

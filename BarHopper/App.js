@@ -5,16 +5,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import Navigation from './navigation';
 
 import useColorScheme from './hooks/useColorScheme';
+import Amplify, { Auth } from 'aws-amplify';
+import config from './aws-exports';
+Amplify.configure({
+    ...config,
+    Analytics: {
+      disabled: true
+    }
+});
+import { withAuthenticator } from 'aws-amplify-react-native';
 
-export default function App() {
+const App = () => {
 	const colorScheme = useColorScheme();
-	return (
-		// <View style={styles.container}>
-		// 	<Text>This works!!!!!</Text>
-		// 	<StatusBar style="auto" />
-		// </View>
-		<Navigation colorScheme={colorScheme} />
-	);
+	return <Navigation colorScheme={colorScheme} />;
 }
 
 const styles = StyleSheet.create({
@@ -25,3 +28,5 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	}
 });
+
+export default withAuthenticator(App);
