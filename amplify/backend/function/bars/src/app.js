@@ -76,7 +76,7 @@ app.get("/bars", function (req, res) {
       response = await axios.get(
         `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.query.lat}%2C${req.query.long}&radius=${req.query.radius}&type=bar&key=${process.env.GOOGLE_API_KEY}`
       );
-      console.log(resp.data);
+      res.send(response.data);
     } catch (err) {
       // Handle Error Here
       console.error(err);
@@ -113,13 +113,42 @@ app.get("/bars", function (req, res) {
   // res.json({ success: "Google Maps API didn't trigger", url: req.url });
 });
 
-app.get("*", function (req, res) {
-  res.json({ success: "* route", url: req.url });
-});
+// app.get("*", function (req, res) {
+//   res.json({ success: "* route", url: req.url });
+// });
 
-app.get("/bars/*", function (req, res) {
-  // Add your code here
-  res.json({ success: "get call succeed!", url: req.url });
+app.get("/bars/:id", function (req, res) {
+  //TODO: Add error handling
+
+  let axios = require("axios");
+
+  let config = {
+    method: "get",
+    url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${req.params.id}&key=${process.env.GOOGLE_API_KEY}`,
+    headers: {},
+  };
+
+  axios(config)
+    .then(function (response) {
+      let result = {
+        name: response.data.result["name"],
+        location: "response.data.results.geometry.location",
+        address: "address",
+        phone_number: "phone number",
+        open_time: "open time",
+        close_time: "close time",
+        vaccination_protocols: "show a vaccination card",
+      };
+
+      //TODO: Integrate with Dynamo to get line_attributes and music
+      result.line_attributes = "[]";
+      result.music_playing = "[]";
+
+      res.json(result);
+    })
+    .catch(function (error) {
+      res.json({ error });
+    });
 });
 
 // /****************************
