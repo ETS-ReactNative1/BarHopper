@@ -7,6 +7,8 @@ import { Text, View } from '../components/Themed';
 import MapView from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import * as Location from 'expo-location';
+import { Marker } from "react-native-maps";
+
 
 export default function MapScreen() {
 
@@ -19,6 +21,13 @@ export default function MapScreen() {
 		where: { latitude: null, longitude: null },
 		error: null
 	})
+
+	const [data, setData] = React.useState({
+		json_string: data,
+		error: null
+	})
+
+
 
 	Location.installWebGeolocationPolyfill();
 	navigator.geolocation.getCurrentPosition(geoSuccess, geoFailure, { enableHighAccuracy: true, timeout: 20000 });
@@ -38,13 +47,32 @@ export default function MapScreen() {
 		headers: {}
 	};
 
+	var establishments = {};
+
 	axios(config)
 		.then(function (response) {
-			console.log(JSON.stringify(response));
+			//setResults(response);
+			var str = JSON.stringify(response);
+			var parsed = JSON.parse(str);
+			console.log(parsed);
+			//console.log(parsed.data.results[1].name);
+			var places = parsed.data.results;
+
+			places.forEach((place) => {
+
+				establishments[place.place_id] = {
+					name: place.name,
+					longitude: place.geometry.location.lng,
+					latitude: place.geometry.location.lat
+				};
+			})
+			console.log(establishments);
+
 		})
 		.catch(function (error) {
 			console.log(error);
 		});
+
 
 	return (
 
@@ -82,7 +110,22 @@ export default function MapScreen() {
 					longitudeDelta: 0.0421
 				}}
 				showsUserLocation={true}
-				provider="google" />
+				provider="google">
+
+
+
+				<Marker style={{ width: 26, height: 28 }} coordinate={{
+					latitude: 40.74708623964595,
+					longitude: -74.0258037865746,
+				}}
+					image={require('../assets/carrot1.png')}
+
+
+				/>
+
+
+
+			</MapView>
 		</View>
 	);
 }
