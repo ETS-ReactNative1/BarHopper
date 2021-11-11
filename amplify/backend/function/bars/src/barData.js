@@ -1,8 +1,5 @@
-// const tasks = require("./mongoCollections").tasks;
-// const users = require("../datalayer/users");
-// const ObjectID = require("mongodb").ObjectID;
-// const verify = require("../util/verify");
-// const { str } = require("../util/verify");
+const verify = require("./util");
+const { str } = require("./util");
 
 const AWS = require("aws-sdk");
 
@@ -14,12 +11,11 @@ const DynamoDB = new AWS.DynamoDB();
 
 const addAttributes = (barID, vibe, line_attribute, music_playing) => {
   //TODO: Make it so it integrates with existing data rather than overwriting it
-  //   verify.str(taskName);
-  //   verify.str(description);
-  //   verify.str(createdBy);
-  //   verify.str(assignedTo);
-  //   verify.num(status);
-  //   verify.tags(tags);
+  verify.str(barID);
+  verify.str(vibe);
+  verify.str(line_attribute);
+  verify.str(music_playing);
+
   const params = {
     TableName: "BAR_TABLE",
     Item: {
@@ -43,6 +39,8 @@ const addAttributes = (barID, vibe, line_attribute, music_playing) => {
 };
 
 const getBar = async (barID) => {
+  verify.str(barID);
+
   const params = {
     TableName: "BAR_TABLE",
     Key: {
@@ -50,14 +48,15 @@ const getBar = async (barID) => {
     },
   };
 
-  DynamoDB.getItem(params, function (err, data) {
-    if (err) {
-      console.error("Unable to find bar", err);
-    } else {
-      console.log("Found bar", data.Item);
-      return data.Item;
-    }
-  });
+  try {
+    const data = await DynamoDB.getItem(params).promise();
+    console.log("Success");
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log("Failure", err.message);
+    // there is no data here, you can return undefined or similar
+  }
 
   //   verify.objID(id);
   //   let collection = await tasks();

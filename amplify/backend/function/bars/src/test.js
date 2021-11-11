@@ -9,8 +9,14 @@ const bars = require("./barData");
 
 // console.log(addResponse);
 
-response = bars.getBar("ChIJN1t_tDeuEmsRUsoyG83frY4");
-console.log(response);
+(async () => {
+  console.log("before start");
+
+  const result = await bars.getBar("ChIJN1t_tDeuEmsRUsoyG83frY4");
+
+  console.log("after start");
+  console.log(result);
+})();
 
 // let response = bars.getBar("ChIJN1t_tDeuEmsRUsoyG83frY4");
 // console.log(response);
