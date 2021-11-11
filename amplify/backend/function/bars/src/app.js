@@ -59,6 +59,9 @@ const convertUrlType = (param, type) => {
 
 app.get("/bars", function (req, res) {
   //TODO: Add Error Handling
+  if (!req.query.lat || !req.query.long || !req.query.radius) {
+    res.json({ error: "invalid paramters" });
+  }
 
   let axios = require("axios");
 
@@ -68,49 +71,30 @@ app.get("/bars", function (req, res) {
     headers: {},
   };
 
-  let latLong = req.latLong;
-  let response;
+  axios(config)
+    .then(function (response) {
+      let results = [];
 
-  const sendGetRequest = async () => {
-    try {
-      response = await axios.get(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.query.lat}%2C${req.query.long}&radius=${req.query.radius}&type=bar&key=${process.env.GOOGLE_API_KEY}`
-      );
-      res.send(response.data);
-    } catch (err) {
-      // Handle Error Here
-      console.error(err);
-    }
-  };
+      response.data.results.forEach((bar) => {
+        let newBar = {
+          name: bar["name"],
+          location: "bar.geometry.location",
+          address: bar["formatted_address"],
+          phone_number: bar["formatted_phone_number"],
+          open_time: "open time",
+          close_time: "close time",
+          vaccination_protocols: "show a vaccination card",
+        };
+        results.push(newBar);
+        // if uuid is in the table
+        // add attributes to current object
+      });
 
-  sendGetRequest();
-
-  res.json({ response });
-
-  // axios(config)
-  //   .then(function (response) {
-  //     let results = [];
-
-  //     res.json(response.data.results);
-
-  //     // response.data.results.forEach((bar) => {
-  //     //   // results.push({bar.name, bar.vicinity, bar.opening_hours, bar.phone_number, bar.photo_reference});
-  //     //   results.push(bar);
-  //     //   // if lat/long is in the table
-  //     //   // add attributes to current object
-
-  //     //   // append: name, vicinity, ?phone_number, opening_hours, photo_reference
-  //     // });
-
-  //     // res.send(results);
-  //     res.json({ success: "Google Maps API did trigger", url: req.url });
-  //     console.log(JSON.stringify(response.data));
-  //   })
-  //   .catch(function (error) {
-  //     res.json({ error });
-  //   });
-
-  // res.json({ success: "Google Maps API didn't trigger", url: req.url });
+      res.json(results);
+    })
+    .catch(function (error) {
+      res.json({ error });
+    });
 });
 
 // app.get("*", function (req, res) {
@@ -133,8 +117,8 @@ app.get("/bars/:id", function (req, res) {
       let result = {
         name: response.data.result["name"],
         location: "response.data.results.geometry.location",
-        address: "address",
-        phone_number: "phone number",
+        address: response.data.result["formatted_address"],
+        phone_number: response.data.result["formatted_phone_number"],
         open_time: "open time",
         close_time: "close time",
         vaccination_protocols: "show a vaccination card",
@@ -152,46 +136,31 @@ app.get("/bars/:id", function (req, res) {
 });
 
 // /****************************
-//  * Example post method *
+//  * POST bars method *
 //  ****************************/
 
-// app.post("/items", function (req, res) {
-//   // Add your code here
-//   res.json({ success: "post call succeed!", url: req.url, body: req.body });
-// });
-
-// app.post("/items/*", function (req, res) {
-//   // Add your code here
-//   res.json({ success: "post call succeed!", url: req.url, body: req.body });
-// });
+app.post("/bars/:id", function (req, res) {
+  // Add your code here
+  res.json({ success: "post call succeed!", url: req.url, body: req.body });
+});
 
 // /****************************
-//  * Example put method *
+//  * PUT bars methods *
 //  ****************************/
 
-// app.put("/items", function (req, res) {
-//   // Add your code here
-//   res.json({ success: "put call succeed!", url: req.url, body: req.body });
-// });
-
-// app.put("/items/*", function (req, res) {
-//   // Add your code here
-//   res.json({ success: "put call succeed!", url: req.url, body: req.body });
-// });
+app.put("/items/:id", function (req, res) {
+  // Add your code here
+  res.json({ success: "put call succeed!", url: req.url, body: req.body });
+});
 
 // /****************************
-//  * Example delete method *
+//  * DELETE bars method *
 //  ****************************/
 
-// app.delete("/items", function (req, res) {
-//   // Add your code here
-//   res.json({ success: "delete call succeed!", url: req.url });
-// });
-
-// app.delete("/items/*", function (req, res) {
-//   // Add your code here
-//   res.json({ success: "delete call succeed!", url: req.url });
-// });
+app.delete("/items/:id", function (req, res) {
+  // Add your code here
+  res.json({ success: "delete call succeed!", url: req.url });
+});
 
 /********************************
  * HTTP Get method for list objects *
