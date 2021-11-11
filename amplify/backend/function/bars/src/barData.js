@@ -4,16 +4,15 @@
 // const verify = require("../util/verify");
 // const { str } = require("../util/verify");
 
-// Load the AWS SDK for Node.js
-var AWS = require("aws-sdk");
-// Set the region
-AWS.config.update({ region: process.env.TABLE_REGION });
+const AWS = require("aws-sdk");
 
-// Create the DynamoDB service object
-var ddb = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+AWS.config.update({
+  region: "us-east-1", // replace with your region in AWS account
+});
 
-const addAttributes = (barID, line_attribute, music_playing) => {
+const DynamoDB = new AWS.DynamoDB();
+
+const addAttributes = (barID, vibe, line_attribute, music_playing) => {
   //TODO: Make it so it integrates with existing data rather than overwriting it
   //   verify.str(taskName);
   //   verify.str(description);
@@ -21,66 +20,42 @@ const addAttributes = (barID, line_attribute, music_playing) => {
   //   verify.str(assignedTo);
   //   verify.num(status);
   //   verify.tags(tags);
-  var params = {
-    TableName: "BARS-TABLE",
-    // Item: {
-    //   Key: { id: "aaaa" },
-    //   LINE_ATTRIBUTE: { L: line_attribute },
-    //   MUSIC_PLAYING: { L: music_playing },
-    // },
+  const params = {
+    TableName: "BAR_TABLE",
     Item: {
-      CUSTOMER_ID: { N: "001" },
-      CUSTOMER_NAME: { S: "Richard Roe" },
+      uuid: { S: barID },
+      vibe: { SS: vibe },
+      line_attribute: { SS: line_attribute },
+      music_playing: { SS: music_playing },
     },
   };
-  // Call DynamoDB to add the item to the table
-  ddb.putItem(params, function (err, data) {
+
+  DynamoDB.putItem(params, function (err) {
     if (err) {
-      return err;
+      console.error("Unable to add bar", err);
     } else {
-      return data;
+      console.log(`Added ${uuid} with a Vibe of ${vibe}%`);
     }
   });
-  //   let collection = await tasks();
-  //   let now = new Date();
-  //   let insertInfo = await collection.insertOne({
-  //     taskName: taskName,
-  //     description: description,
-  //     createdBy: createdBy,
-  //     assignedTo: assignedTo,
-  //     status: status,
-  //     tags: tags,
-  //     comments: [],
-  //     postedDate: now,
-  //     lastUpdated: now,
-  //   });
-  //   let id = insertInfo.insertedId;
+
   //   if (id === 0) throw new Error("Insertion error!");
   //   return await getTask(String(id));
 };
 
-function getBar(id) {
-  //   var params = {
-  //     TableName: "BARS-TABLE",
-  //     Item: {
-  //       Key: { id: "ChIJN1t_tDeuEmsRUsoyG83frY4" },
-  //     },
-  //   };
-  let getItemParams = {
-    TableName: "BARS-TABLE",
-    Key: "ChIJN1t_tDeuEmsRUsoyG83frY4",
+const getBar = async (barID) => {
+  const params = {
+    TableName: "BAR_TABLE",
+    Key: {
+      uuid: { S: barID },
+    },
   };
 
-  dynamodb.get(getItemParams, (err, data) => {
+  DynamoDB.getItem(params, function (err, data) {
     if (err) {
-      //TODO throw exception
-      return "Could not load items: " + err.message;
+      console.error("Unable to find bar", err);
     } else {
-      if (data.Item) {
-        return data.Item;
-      } else {
-        return data;
-      }
+      console.log("Found bar", data.Item);
+      return data.Item;
     }
   });
 
@@ -89,7 +64,7 @@ function getBar(id) {
   //   let obj = await collection.findOne({ _id: ObjectID(id) });
   //   if (obj === null) throw new Error("No task found with ID " + id);
   //   return obj;
-}
+};
 
 // /**
 //  * Update task of `id`, with a dictionary of updated values.

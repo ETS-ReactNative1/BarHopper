@@ -1,37 +1,67 @@
-// const bars = require("./barData");
+const bars = require("./barData");
 
 // let addResponse = bars.addAttributes(
 //   "ChIJN1t_tDeuEmsRUsoyG83frY4",
-//   ["short line"],
-//   ["country"]
+//   ["dive"],
+//   ["long ling"],
+//   ["grunge"]
 // );
+
 // console.log(addResponse);
+
+response = bars.getBar("ChIJN1t_tDeuEmsRUsoyG83frY4");
+console.log(response);
 
 // let response = bars.getBar("ChIJN1t_tDeuEmsRUsoyG83frY4");
 // console.log(response);
 
-// Load the AWS SDK for Node.js
-var AWS = require("aws-sdk");
-// Set the region
-AWS.config.update({ region: "us-east-1" });
+// const AWS = require("aws-sdk");
 
-// Create the DynamoDB service object
-var ddb = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
+// AWS.config.update({
+//   region: "us-east-1", // replace with your region in AWS account
+// });
 
-var params = {
-  TableName: "BARS_TABLE",
-  Item: {
-    KEY: { 'S': "aaaa" },
-    "CUSTOMER_ID": { 'N': "001" },
-    "CUSTOMER_NAME": { 'S': "Richard Roe" },
-  },
-};
+// const DynamoDB = new AWS.DynamoDB();
 
-// Call DynamoDB to add the item to the table
-ddb.putItem(params, function (err, data) {
-  if (err) {
-    console.log("Error", err);
-  } else {
-    console.log("Success", data);
-  }
-});
+// function createTable() {
+//   const params = {
+//     TableName: "BAR_TABLE",
+//     KeySchema: [{ AttributeName: "uuid", KeyType: "HASH" }],
+//     AttributeDefinitions: [{ AttributeName: "uuid", AttributeType: "S" }],
+//     ProvisionedThroughput: {
+//       ReadCapacityUnits: 10,
+//       WriteCapacityUnits: 10,
+//     },
+//   };
+
+//   DynamoDB.createTable(params, function (err, data) {
+//     if (err) {
+//       console.error("Unable to create table", err);
+//     } else {
+//       console.log("Created table", data);
+//     }
+//   });
+// }
+
+// function addMovie(title, rtScore) {
+//   const params = {
+//     TableName: "Movies",
+//     Item: {
+//       title: { S: title },
+//       rtScore: { N: rtScore },
+//     },
+//   };
+
+//   DynamoDB.putItem(params, function (err) {
+//     if (err) {
+//       console.error("Unable to add movie", err);
+//     } else {
+//       console.log(`Added ${title} with a Rotten Tomatoes Score of ${rtScore}%`);
+//     }
+//   });
+// }
+
+// module.exports = {
+//   createTable,
+//   addMovie,
+// };

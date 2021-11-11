@@ -81,8 +81,7 @@ app.get("/bars", function (req, res) {
           location: "bar.geometry.location",
           address: bar["formatted_address"],
           phone_number: bar["formatted_phone_number"],
-          open_time: "open time",
-          close_time: "close time",
+          open_time: bar["opening_hours"],
           vaccination_protocols: "show a vaccination card",
         };
         results.push(newBar);
@@ -116,11 +115,10 @@ app.get("/bars/:id", function (req, res) {
     .then(function (response) {
       let result = {
         name: response.data.result["name"],
-        location: "response.data.results.geometry.location",
+        // location: response.data.results["geometry"]["location"],
         address: response.data.result["formatted_address"],
         phone_number: response.data.result["formatted_phone_number"],
-        open_time: "open time",
-        close_time: "close time",
+        open_time: response.data.result["opening_hours"]["periods"],
         vaccination_protocols: "show a vaccination card",
       };
 
