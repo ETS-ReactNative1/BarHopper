@@ -6,8 +6,6 @@ const type = (typename, typecheck) => (obj) => {
     throw new Error("Object of type " + typename + " not found!");
   if (!typecheck(obj))
     throw new Error("Expected " + typename + " but got a " + typeof obj + ".");
-
-  return true;
 };
 const str = type("string", (x) => typeof x === "string");
 const num = type("number", (x) => typeof x === "number");
@@ -42,6 +40,16 @@ const objID = (x) => {
     );
 };
 
+const tags = (x) => {
+  arr(x);
+  x.map((tag) => {
+    str(tag);
+    if (tag.length > 23) {
+      throw new Error("Tags must be less than 24 characters!");
+    }
+  });
+};
+
 const commentObj = (x) => {
   obj(x);
   if (!("user" in x)) {
@@ -69,6 +77,7 @@ module.exports = {
   alphaStr,
   email,
   objID,
+  tags,
   commentObj,
   comments,
 };

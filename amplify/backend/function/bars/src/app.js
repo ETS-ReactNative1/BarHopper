@@ -1,35 +1,15 @@
-/*
-Copyright 2017 - 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
-    http://aws.amazon.com/apache2.0/
-or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and limitations under the License.
-*/
-
 const AWS = require("aws-sdk");
 var awsServerlessExpressMiddleware = require("aws-serverless-express/middleware");
 var bodyParser = require("body-parser");
 var express = require("express");
+const verify = require("./util");
 
-AWS.config.update({ region: process.env.TABLE_REGION });
+AWS.config.update({
+  region: "us-east-1", // replace with your region in AWS account
+});
 
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-let tableName = "BarTable";
-if (process.env.ENV && process.env.ENV !== "NONE") {
-  tableName = tableName + "-" + process.env.ENV;
-}
-
-const userIdPresent = false; // TODO: update in case is required to use that definition
-const partitionKeyName = "id";
-const partitionKeyType = "S";
-const sortKeyName = "";
-const sortKeyType = "";
-const hasSortKey = sortKeyName !== "";
-const path = "/bars";
-const UNAUTH = "UNAUTH";
-const hashKeyPath = "/:" + partitionKeyName;
-const sortKeyPath = hasSortKey ? "/:" + sortKeyName : "";
+// const DynamoDB = new AWS.DynamoDB();
+const docClient = new AWS.DynamoDB.DocumentClient();
 
 // declare a new express app
 var app = express();
@@ -42,16 +22,6 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "*");
   next();
 });
-
-// convert url string param to expected Type
-const convertUrlType = (param, type) => {
-  switch (type) {
-    case "N":
-      return Number.parseInt(param);
-    default:
-      return param;
-  }
-};
 
 /**********************
  * GET bar methods *
@@ -78,7 +48,8 @@ app.get("/bars", function (req, res) {
       response.data.results.forEach((bar) => {
         let newBar = {
           name: bar["name"],
-          location: "bar.geometry.location",
+          location: bar["geometry"]["location"],
+          icon: bar["icon"],
           address: bar["formatted_address"],
           phone_number: bar["formatted_phone_number"],
           open_time: bar["opening_hours"],
@@ -101,7 +72,7 @@ app.get("/bars", function (req, res) {
 // });
 
 app.get("/bars/:id", function (req, res) {
-  //TODO: Add error handling
+  verify.str(req.params.id);
 
   let axios = require("axios");
 
@@ -113,23 +84,49 @@ app.get("/bars/:id", function (req, res) {
 
   axios(config)
     .then(function (response) {
-      let result = {
-        name: response.data.result["name"],
-        // location: response.data.results["geometry"]["location"],
-        address: response.data.result["formatted_address"],
-        phone_number: response.data.result["formatted_phone_number"],
-        open_time: response.data.result["opening_hours"]["periods"],
-        vaccination_protocols: "show a vaccination card",
+      const params = {
+        TableName: "BAR_TABLE",
+        Key: {
+          uuid: req.params.id,
+        },
       };
 
-      //TODO: Integrate with Dynamo to get line_attributes and music
-      result.line_attributes = "[]";
-      result.music_playing = "[]";
+      async function getItem() {
+        try {
+          const data = await docClient.get(params).promise();
+          return data;
+        } catch (err) {
+          return err;
+        }
+      }
 
-      res.json(result);
+      getItem()
+        .then((data) => {
+          let result = {
+            name: response.data.result["name"],
+            location: response.data.result["geometry"]["location"],
+            address: response.data.result["formatted_address"],
+            phone_number: response.data.result["formatted_phone_number"],
+            open_time: response.data.result["opening_hours"]["periods"],
+            vaccination_protocols: "show a vaccination card",
+          };
+
+          result["vibe"] = data.Item.vibe ? data.Item.vibe : [];
+          result["line_attribute"] = data.Item.line_attribute
+            ? data.Item.line_attribute
+            : [];
+          result["music_playing"] = data.Item.music_playing
+            ? data.Item.music_playing
+            : [];
+
+          return res.json(result);
+        })
+        .catch((error) => {
+          return res.json(JSON.stringify(error));
+        });
     })
     .catch(function (error) {
-      res.json({ error });
+      return res.json({ error });
     });
 });
 
@@ -138,16 +135,165 @@ app.get("/bars/:id", function (req, res) {
 //  ****************************/
 
 app.post("/bars/:id", function (req, res) {
-  // Add your code here
-  res.json({ success: "post call succeed!", url: req.url, body: req.body });
+  verify.str(req.params.id);
+
+  let line_attribute_list =
+    req.query.line_attribute && verify.str(req.query.line_attribute)
+      ? [req.query.line_attribute]
+      : [];
+  let music_playing_list =
+    req.query.music_playing && verify.str(req.query.music_playing)
+      ? [req.query.music_playing]
+      : [];
+  let vibe_list =
+    req.query.vibe && verify.str(req.query.vibe) ? [req.query.vibe] : [];
+
+  const params = {
+    TableName: "BAR_TABLE",
+
+    Item: {
+      uuid: req.params.id,
+      line_attribute: line_attribute_list,
+      music_playing: music_playing_list,
+      vibe: vibe_list,
+    },
+    ReturnValues: "ALL_OLD",
+  };
+
+  async function createItem() {
+    try {
+      await docClient.put(params).promise();
+    } catch (err) {
+      return err;
+    }
+  }
+
+  createItem()
+    .then((result) => {
+      return res.json(result);
+    })
+    .catch((error) => {
+      return res.json(JSON.stringify(error));
+    });
 });
 
 // /****************************
 //  * PUT bars methods *
 //  ****************************/
 
-app.put("/items/:id", function (req, res) {
-  // Add your code here
+app.put("/bars/:id", function (req, res) {
+  verify.str(req.params.id);
+
+  if (req.query.line_attribute && verify.str(req.query.line_attribute)) {
+    let new_line_attribute = req.query.line_attribute;
+
+    const params = {
+      TableName: "BAR_TABLE",
+      Key: {
+        uuid: req.params.id,
+      },
+
+      UpdateExpression:
+        "SET #line_attribute = list_append(#line_attribute, :newAttribute)",
+      ExpressionAttributeNames: {
+        "#line_attribute": "line_attribute",
+      },
+      ExpressionAttributeValues: {
+        ":newAttribute": [`${new_line_attribute}`],
+      },
+      ReturnValues: "ALL_NEW",
+    };
+
+    async function updateItem() {
+      try {
+        await docClient.update(params).promise();
+      } catch (err) {
+        return err;
+      }
+    }
+
+    updateItem()
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        return res.json(JSON.stringify(error));
+      });
+  }
+
+  if (req.query.music_playing && verify.str(req.query.music_playing)) {
+    let new_music_playing = req.query.music_playing;
+
+    const params = {
+      TableName: "BAR_TABLE",
+      Key: {
+        uuid: req.params.id,
+      },
+
+      UpdateExpression:
+        "SET #music_playing = list_append(#music_playing, :newAttribute)",
+      ExpressionAttributeNames: {
+        "#music_playing": "music_playing",
+      },
+      ExpressionAttributeValues: {
+        ":newAttribute": [`${new_music_playing}`],
+      },
+      ReturnValues: "ALL_NEW",
+    };
+
+    async function updateItem() {
+      try {
+        await docClient.update(params).promise();
+      } catch (err) {
+        return err;
+      }
+    }
+
+    updateItem()
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        return res.json(JSON.stringify(error));
+      });
+  }
+
+  if (req.query.vibe && verify.str(req.query.vibe)) {
+    let new_vibe = req.query.vibe;
+
+    const params = {
+      TableName: "BAR_TABLE",
+      Key: {
+        uuid: req.params.id,
+      },
+
+      UpdateExpression: "SET #vibe = list_append(#vibe, :newAttribute)",
+      ExpressionAttributeNames: {
+        "#vibe": "vibe",
+      },
+      ExpressionAttributeValues: {
+        ":newAttribute": [`${new_vibe}`],
+      },
+      ReturnValues: "ALL_NEW",
+    };
+
+    async function updateItem() {
+      try {
+        await docClient.update(params).promise();
+      } catch (err) {
+        return err;
+      }
+    }
+
+    updateItem()
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        return res.json(JSON.stringify(error));
+      });
+  }
+
   res.json({ success: "put call succeed!", url: req.url, body: req.body });
 });
 
@@ -155,245 +301,10 @@ app.put("/items/:id", function (req, res) {
 //  * DELETE bars method *
 //  ****************************/
 
-app.delete("/items/:id", function (req, res) {
+app.delete("/bars/:id", function (req, res) {
   // Add your code here
   res.json({ success: "delete call succeed!", url: req.url });
 });
-
-/********************************
- * HTTP Get method for list objects *
- ********************************/
-
-// app.get(path + hashKeyPath, function (req, res) {
-//  var condition = {};
-//  condition[partitionKeyName] = {
-//    ComparisonOperator: 'EQ'
-//  };
-
-//  if (userIdPresent && req.apiGateway) {
-//    condition[partitionKeyName]['AttributeValueList'] = [
-//      req.apiGateway.event.requestContext.identity.cognitoIdentityId ||
-//        UNAUTH
-//    ];
-//  } else {
-//    try {
-//      condition[partitionKeyName]['AttributeValueList'] = [
-//        convertUrlType(req.params[partitionKeyName], partitionKeyType)
-//      ];
-//    } catch (err) {
-//      res.statusCode = 500;
-//      res.json({ error: 'Wrong column type ' + err });
-//    }
-//  }
-
-//  let queryParams = {
-//    TableName: tableName,
-//    KeyConditions: condition
-//  };
-
-//  dynamodb.query(queryParams, (err, data) => {
-//    if (err) {
-//      res.statusCode = 500;
-//      res.json({ error: 'Could not load items: ' + err });
-//    } else {
-//      res.json(data.Items);
-//    }
-//  });
-// });
-
-/*****************************************
- * HTTP Get method for get single object *
- *****************************************/
-
-// app.get(path + '/object' + hashKeyPath + sortKeyPath, function (req, res) {
-//  var params = {};
-//  if (userIdPresent && req.apiGateway) {
-//    params[partitionKeyName] =
-//      req.apiGateway.event.requestContext.identity.cognitoIdentityId ||
-//      UNAUTH;
-//  } else {
-//    params[partitionKeyName] = req.params[partitionKeyName];
-//    try {
-//      params[partitionKeyName] = convertUrlType(
-//        req.params[partitionKeyName],
-//        partitionKeyType
-//      );
-//    } catch (err) {
-//      res.statusCode = 500;
-//      res.json({ error: 'Wrong column type ' + err });
-//    }
-//  }
-//  if (hasSortKey) {
-//    try {
-//      params[sortKeyName] = convertUrlType(
-//        req.params[sortKeyName],
-//        sortKeyType
-//      );
-//    } catch (err) {
-//      res.statusCode = 500;
-//      res.json({ error: 'Wrong column type ' + err });
-//    }
-//  }
-
-//  let getItemParams = {
-//    TableName: tableName,
-//    Key: params
-//  };
-
-//  dynamodb.get(getItemParams, (err, data) => {
-//    if (err) {
-//      res.statusCode = 500;
-//      res.json({ error: 'Could not load items: ' + err.message });
-//    } else {
-//      if (data.Item) {
-//        res.json(data.Item);
-//      } else {
-//        res.json(data);
-//      }
-//    }
-//  });
-// });
-
-/************************************
- * HTTP put method for insert object *
- *************************************/
-
-// app.put(path, function (req, res) {
-//  if (userIdPresent) {
-//    req.body['userId'] =
-//      req.apiGateway.event.requestContext.identity.cognitoIdentityId ||
-//      UNAUTH;
-//  }
-
-//  let putItemParams = {
-//    TableName: tableName,
-//    Item: req.body
-//  };
-//  dynamodb.put(putItemParams, (err, data) => {
-//    if (err) {
-//      res.statusCode = 500;
-//      res.json({ error: err, url: req.url, body: req.body });
-//    } else {
-//      res.json({
-//        success: 'put call succeed!',
-//        url: req.url,
-//        data: data
-//      });
-//    }
-//  });
-// });
-
-/************************************
- * HTTP post method for insert object *
- *************************************/
-
-// app.post(path, function (req, res) {
-//  if (userIdPresent) {
-//    req.body['userId'] =
-//      req.apiGateway.event.requestContext.identity.cognitoIdentityId ||
-//      UNAUTH;
-//  }
-
-//  let putItemParams = {
-//    TableName: tableName,
-//    Item: req.body
-//  };
-//  dynamodb.put(putItemParams, (err, data) => {
-//    if (err) {
-//      res.statusCode = 500;
-//      res.json({ error: err, url: req.url, body: req.body });
-//    } else {
-//      res.json({
-//        success: 'post call succeed!',
-//        url: req.url,
-//        data: data
-//      });
-//    }
-//  });
-// });
-
-/**************************************
- * HTTP remove method to delete object *
- ***************************************/
-
-// app.delete(path + '/object' + hashKeyPath + sortKeyPath, function (req, res) {
-//  var params = {};
-//  if (userIdPresent && req.apiGateway) {
-//    params[partitionKeyName] =
-//      req.apiGateway.event.requestContext.identity.cognitoIdentityId ||
-//      UNAUTH;
-//  } else {
-//    params[partitionKeyName] = req.params[partitionKeyName];
-//    try {
-//      params[partitionKeyName] = convertUrlType(
-//        req.params[partitionKeyName],
-//        partitionKeyType
-//      );
-//    } catch (err) {
-//      res.statusCode = 500;
-//      res.json({ error: 'Wrong column type ' + err });
-//    }
-//  }
-//  if (hasSortKey) {
-//    try {
-//      params[sortKeyName] = convertUrlType(
-//        req.params[sortKeyName],
-//        sortKeyType
-//      );
-//    } catch (err) {
-//      res.statusCode = 500;
-//      res.json({ error: 'Wrong column type ' + err });
-//    }
-//  }
-
-//  let removeItemParams = {
-//    TableName: tableName,
-//    Key: params
-//  };
-//  dynamodb.delete(removeItemParams, (err, data) => {
-//    if (err) {
-//      res.statusCode = 500;
-//      res.json({ error: err, url: req.url });
-//    } else {
-//      res.json({ url: req.url, data: data });
-//    }
-//  });
-
-// });
-// respond with "hello world" when a GET request is made to the homepage
-// app.get("*", function (req, res) {
-//   //TODO: Add Error Handling
-
-//   var axios = require("axios");
-
-//   var config = {
-//     method: "get",
-//     url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.query.lat}%2C${req.query.long}&radius=${req.query.radius}&type=bar&key=${process.env.GOOGLE_API_KEY}`,
-//     headers: {},
-//   };
-
-//   let latLong = req.latLong;
-
-//   axios(config)
-//     .then(function (response) {
-//       let results = [];
-
-//       response.data.results.forEach((bar) => {
-//         // results.push({bar.name, bar.vicinity, bar.opening_hours, bar.phone_number, bar.photo_reference});
-//         results.push({ bar });
-//         // if lat/long is in the table
-//         // add attributes to current object
-
-//         // append: name, vicinity, ?phone_number, opening_hours, photo_reference
-//       });
-
-//       res.send(results);
-//       console.log(JSON.stringify(response.data));
-//     })
-//     .catch(function (error) {
-//       res.send(error);
-//     });
-// });
 
 app.listen(3000, function () {
   console.log("App started");
