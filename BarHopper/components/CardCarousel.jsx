@@ -48,7 +48,7 @@ const ShopCarousel = (props) => {
 				activeOpacity={1}
 				style={styles.item}
 				onPress={() =>
-					navigation.navigate('BarInfo', {
+					navigation.navigate('Bar Information', {
 						uuid: { _id },
 						data: item
 					})
@@ -63,10 +63,11 @@ const ShopCarousel = (props) => {
 							<View
 								style={{
 									flexDirection: 'row',
-									justifyContent: 'space-between'
+									justifyContent: 'space-between',
+
 								}}
 							>
-								<Badge
+								{/* <Badge
 									value="Dive Bar"
 									badgeStyle={styles.vibeBadge}
 									textStyle={styles.badgeText}
@@ -75,7 +76,7 @@ const ShopCarousel = (props) => {
 									value="0.3 miles away"
 									badgeStyle={styles.vibeBadge}
 									textStyle={styles.badgeText}
-								/>
+								/> */}
 							</View>
 						</View>
 					</View>
@@ -144,16 +145,16 @@ const styles = StyleSheet.create({
 	lowerContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		padding: 12,
-		backgroundColor: `#b0e0e6a0`,
+		padding: 10,
+		backgroundColor: `#009292`,
 		position: 'absolute',
 		bottom: 0,
 		width: '100%'
 	},
 	titleText: {
-		fontSize: 16,
+		fontSize: 14,
 		fontWeight: 'bold',
-		color: '#1C2127'
+		color: '#ffffff'
 	},
 	descriptionText: {
 		fontSize: 14,

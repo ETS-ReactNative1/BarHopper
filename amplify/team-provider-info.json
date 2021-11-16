@@ -1,0 +1,26 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-barhopperbackend-dev-165014-authRole",
+      "UnauthRoleArn": "arn:aws:iam::590272945317:role/amplify-barhopperbackend-dev-165014-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::590272945317:role/amplify-barhopperbackend-dev-165014-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-barhopperbackend-dev-165014-deployment",
+      "UnauthRoleName": "amplify-barhopperbackend-dev-165014-unauthRole",
+      "StackName": "amplify-barhopperbackend-dev-165014",
+      "StackId": "arn:aws:cloudformation:us-east-1:590272945317:stack/amplify-barhopperbackend-dev-165014/cc820490-3d00-11ec-9a2b-0a7441dff6c9",
+      "AmplifyAppId": "d2m6r4movao0gw"
+    },
+    "categories": {
+      "auth": {
+        "barhopper14dec28f": {}
+      },
+      "function": {
+        "bars": {
+          "deploymentBucketName": "amplify-barhopperbackend-dev-165014-deployment",
+          "s3Key": "amplify-builds/bars-32632b737161374f7957-build.zip"
+        }
+      }
+    }
+  }
+}

@@ -1,12 +1,12 @@
 {
   "paths": [
     {
-      "name": "/items",
+      "name": "/bars",
       "lambdaFunction": "bars",
       "privacy": {
         "open": true
       },
-      "policyResourceName": "/items"
+      "policyResourceName": "/bars"
     }
   ],
   "resourceName": "Bars",
@@ -19,17 +19,15 @@
   "privacy": {
     "auth": 0,
     "unauth": 0,
-    "authRoleName": "amplify-barhopper-dev-105020-authRole",
-    "unAuthRoleName": "amplify-barhopper-dev-105020-unauthRole"
+    "authRoleName": "amplify-barhopperbackend-dev-165014-authRole",
+    "unAuthRoleName": "amplify-barhopperbackend-dev-165014-unauthRole"
   },
   "dependsOn": [
     {
       "category": "function",
       "resourceName": "bars",
-      "attributes": [
-        "Name",
-        "Arn"
-      ]
+      "attributes": ["Name", "Arn"]
     }
-  ]
+  ],
+  "uuid": "2d82ee1f"
 }

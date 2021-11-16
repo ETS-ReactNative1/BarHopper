@@ -1,18 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
-import * as React from 'react';
+import React, {useEffect, useState, useRef } from 'react';
 import {
 	Platform,
 	Image,
 	ScrollView,
 	SectionList,
 	StyleSheet,
-	Dimensions
+	Dimensions,
+	ImageBackground
 } from 'react-native';
 import { Divider, ListItem, Icon } from 'react-native-elements';
 import { SafeAreaView, Text, View } from '../components/Themed';
 
 const { width: windowWidth } = Dimensions.get('window');
 const ITEM_WIDTH = 0.5 * windowWidth;
+const axios = require("axios");
 
 export default function BarInfoScreen({ route }) {
 	const { data } = route.params;
@@ -39,6 +41,39 @@ export default function BarInfoScreen({ route }) {
 		}
 	];
 
+	useEffect(() => {
+		let isMounted = true;
+    try {
+
+
+			const config = {
+				method: "get",
+				url: "https://c6jxkilx8a.execute-api.us-east-1.amazonaws.com/dev/bars?lat=-33.8670522&long=151.1957362&radius=1500",
+				headers: {
+				"X-Amz-Date": "20211113T172707Z",
+				Authorization:
+				"AWS4-HMAC-SHA256 Credential=AKIAYS3YCLSS436J4VVF/20211113/us-east-1/execute-api/aws4_request, SignedHeaders=host;x-amz-date, Signature=be161e0053c676970d25d52a5fcce10e67e7f3eb038bb383da77c2dc959ac12b",
+				},
+			};
+
+			axios(config)
+				.then(function (response) {
+					console.log(JSON.stringify(response.data));
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+
+		}
+    catch (e) {
+			console.log(e);
+    }
+    finally {
+			isMounted = false;
+    }
+  }, []);
+
+
 	// temp object, should be deleted during integration
 	const Item = ({ title }) => (
 		<View style={styles.item}>
@@ -47,74 +82,59 @@ export default function BarInfoScreen({ route }) {
 	);
 
 	return (
-		<SafeAreaView style={styles.container}>
-			<Text style={styles.title} numberOfLines={1}>
-				{name}
-			</Text>
-
-			<View style={styles.vertical}>
-				<View style={{ marginHorizontal: 10 }}>
+		// <SafeAreaView style={styles.container}>
+		<ScrollView style={{ flex: 1 }}>
+			<ImageBackground source={{ uri: image }} style={styles.storefront}>
+					<View style={styles.lowerContainer}>
+						<View style={{backgroundColor: '#971984', width: '20%'}}>
+							<Text style={styles.rating}>4.5/5</Text>
+						</View>
+						<View style={{backgroundColor: '#009292', width: '80%'}}>
+							<Text style={styles.title} numberOfLines={1}>
+								{name}
+							</Text>
+						</View>
+					</View>
+				</ImageBackground>
+			<Text style={styles.heading}>General Info</Text>
+			<View style={styles.boxesView}>
+				<View style={styles.vertical}>
+					<View style={{ marginHorizontal: 10 }}>
 					<Text style={styles.subHeader}>Hours</Text>
 					<Text style={styles.barMetaData}>
 						{open_time} - {close_time}
 					</Text>
-				</View>
-
+					</View>
 				<Divider orientation="vertical" width={2} />
 				<View style={{ marginHorizontal: 10 }}>
 					<Text style={styles.subHeader}>Distance</Text>
 					<Text style={styles.barMetaData}>0.2 Miles Away</Text>
 				</View>
-
-				<Divider orientation="vertical" width={2} />
-				<View style={{ marginHorizontal: 10 }}>
-					<Text style={styles.subHeader}>Vibe</Text>
-					<Text style={styles.barMetaData}>Dive Bar</Text>
 				</View>
-			</View>
-
-			<View
-				style={{
-					flexDirection: 'row',
-					justifyContent: 'space-between'
-				}}
-			>
-				<Image source={{ uri: image }} style={styles.storefront} />
-				<View
-					style={{
-						flex: 1,
-						flexDirection: 'column',
-						alignItems: 'center',
-						justifyContent: 'center'
-					}}
-				>
-					<Text style={styles.rating}>4.5/5</Text>
-				</View>
-			</View>
-			<View style={{ alignSelf: 'flex-start', marginHorizontal: 10 }}>
+				<Divider orientation="horizontal" width={1} style={styles.divider} />
 				<Text style={styles.subHeader}>Address</Text>
 				<Text style={styles.barMetaData}>{location}</Text>
-				<Divider orientation="horizontal" width={1} />
+				<Divider orientation="horizontal" width={1} style={styles.divider} />
 				<Text style={styles.subHeader}>Phone Number</Text>
 				<Text style={styles.barMetaData}>{phone_number}</Text>
-				<Divider orientation="horizontal" width={1} />
-				<Text style={styles.subHeader}>Covid Precautions</Text>
-				<Text style={styles.barMetaData}>{vaccination_protocols}</Text>
 			</View>
+			<Text style={styles.heading}>Other Info</Text>
+			<View style={styles.boxesView}>
+				<Text style={styles.subHeader}>Line</Text>
+				<Text style={styles.barMetaData}>{location}</Text>
+				<Divider orientation="horizontal" width={1} style={styles.divider} />
+				<Text style={styles.subHeader}>Music</Text>
+				<Text style={styles.barMetaData}>{location}</Text>
+				<Divider orientation="horizontal" width={1} style={styles.divider} />
+				<Text style={styles.subHeader}>Vibe</Text>
+				<Text style={styles.barMetaData}>{location}</Text>
+				<Divider orientation="horizontal" width={1} style={styles.divider} />
+				<Text style={styles.subHeader}>COVID Precautions</Text>
+				<Text style={styles.barMetaData}>{location}</Text>
 
-			<View style={{ alignSelf: 'flex-start', margin: 10 }}>
-				<SectionList
-					sections={DATA}
-					keyExtractor={(item, index) => item + index}
-					renderItem={({ item }) => <Item title={item} />}
-					renderSectionHeader={({ section: { title } }) => (
-						<Text style={styles.subHeader}>{title}</Text>
-					)}
-				/>
-			</View>
-
+				</View>
 			<StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-		</SafeAreaView>
+	</ScrollView>
 	);
 }
 
@@ -131,35 +151,69 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	title: {
-		fontSize: 26,
+		fontSize: 20,
 		fontWeight: 'bold',
-		marginBottom: 15
+		// textAlign: 'center',
+		color: '#fff',
+		padding: 5,
 	},
 	rating: {
-		fontSize: 30,
+		// textAlign: 'center',
+		fontSize: 20,
+		padding: 5,
 		fontWeight: 'bold',
-		marginVertical: 20,
-		justifyContent: 'center',
-		alignItems: 'center'
+		color: '#fff',
 	},
 	separator: {
 		marginVertical: 30,
 		height: 1,
 		width: '80%'
 	},
+	divider: {
+		marginTop: 10,
+		marginBottom: 10,
+	},
 	storefront: {
-		width: 0.5 * windowWidth,
+		width: windowWidth,
 		height: ITEM_WIDTH,
-		margin: 10
+		marginBottom: 10,
+		shadowColor: '#171717',
+    shadowOffset: {width: -2, height: 8},
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
 	},
 	subHeader: {
 		fontSize: 12,
-		fontWeight: 'bold'
+		fontWeight: 'bold',
+		// color: '#657657',
 	},
 	vertical: {
+		marginTop: 10,
 		marginBottom: 10,
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'space-evenly'
-	}
+		justifyContent: 'space-evenly',
+	},
+	lowerContainer: {
+		flexDirection: 'row',
+		// padding: 10,
+		// justifyContent: 'space-between',
+		// backgroundColor: `#009292`,
+		position: 'absolute',
+		bottom: 0,
+		width: '100%'
+	},
+	heading: {
+		padding: 10,
+		color: '#000000',
+		backgroundColor: '#d2e9e9',
+		borderStyle: 'solid',
+		borderWidth: 0.5,
+		borderColor: '#009292',
+		// marginBottom: 10,
+		marginTop: 10,
+	},
+	boxesView: {
+		padding: 10,
+	},
 });

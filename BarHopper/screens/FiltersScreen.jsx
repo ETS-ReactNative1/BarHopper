@@ -324,6 +324,11 @@ const FiltersScreen = () => {
 						}}
 					/>
 				</View>
+				<View style={styles.nextView}>
+				<Pressable style={styles.nextButton} onPress={() => console.log('hi')}>
+          <Text style={styles.nextButtonText}>Next</Text>
+        </Pressable>
+			</View>
 			</ScrollView>
     </View>
 	);
@@ -356,6 +361,23 @@ const styles = StyleSheet.create({
 	},
 	boxesView: {
 		padding: 10,
+	},
+	nextButton: {
+		padding: 10,
+		backgroundColor: '#009292',
+		width: '50%',
+
+	},
+	nextButtonText: {
+		textAlign: 'center',
+		color: '#ffffff',
+		fontSize: 18,
+		fontWeight: 'bold',
+	},
+	nextView: {
+		marginTop: 10,
+		marginBottom: 10,
+		alignItems: 'center',
 	}
 });
 
