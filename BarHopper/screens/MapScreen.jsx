@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, ScrollView } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
@@ -78,7 +78,7 @@ export default function MapScreen() {
 
 
 
-		<View style={{ marginTop: 50, flex: 1 }}>
+		<View style={{ flex: 1 }}>
 			<GooglePlacesAutocomplete
 				placeholder='Search'
 				fetchDetails={true}
@@ -90,15 +90,14 @@ export default function MapScreen() {
 					console.log(data, details);
 				}}
 				query={{
-					key: '',
+					key: 'AIzaSyADaQtqQonJgl5UGWltQxWWU9qSYnK1EFM',
 					language: 'en',
 					components: "country:us",
-					types: "establishments",
-					radius: 50000,
+					radius: 5000,
 					location: `${region.latitude}, ${region.longitude}`
 				}}
 				styles={{
-					container: { flex: 0, position: "absolute", width: "100%", zIndex: 1 },
+					container: { marginTop: 50, flex: 0, position: "absolute", width: "100%", zIndex: 1 },
 					listView: { backgroundColor: "white" }
 				}}
 			/>
