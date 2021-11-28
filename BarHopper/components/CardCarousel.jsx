@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, {useEffect, useState, useRef } from 'react';
 import {
 	StyleSheet,
 	Text,
@@ -16,6 +16,8 @@ import Carousel from 'react-native-anchor-carousel';
 import BarHopperLogo from '../assets/bar-hopper-logo.png';
 import TestData from './test-data/Bars';
 import { useNavigation } from '@react-navigation/native';
+import * as Location from 'expo-location';
+const axios = require('axios');
 
 const { width: windowWidth } = Dimensions.get('window');
 
@@ -23,9 +25,57 @@ const ITEM_WIDTH = 0.5 * windowWidth;
 const SEPARATOR_WIDTH = 10;
 
 const ShopCarousel = (props) => {
-	const { style } = props;
+	console.log(props);
+	const { style, userLocation } = props;
 	const carouselRef = useRef(null);
 	const navigation = useNavigation();
+	const [nearbyBars, setNearbyBars] = useState([]);
+	const [shortLineBars, setBarsInfo] = useState([]);
+	const [locationInfo, setLocationInfo] = useState(null);
+
+	Location.installWebGeolocationPolyfill();
+	navigator.geolocation.getCurrentPosition(
+		(position) =>
+			setLocationInfo({
+				latitude: position.coords.latitude,
+				longitude: position.coords.longitude
+			}),
+		geoFailure,
+		{
+			enableHighAccuracy: true,
+			timeout: 20000
+		}
+	);
+	const geoFailure = (err) => {
+		consolr.log(err);
+		setLocationInfo({ error: err.message });
+	};
+useEffect(() => {
+
+	try {
+		const nearbyBarsConfig = {
+			method: 'get',
+			url: `https://c6jxkilx8a.execute-api.us-east-1.amazonaws.com/dev/bars?lat=${userLocation.latitude}&long=${userLocation.longitude}&radius=1500`,
+			headers: {
+				"X-Amz-Date": "20211113T172707Z",
+				Authorization: "AWS4-HMAC-SHA256 Credential=AKIAYS3YCLSS436J4VVF/20211113/us-east-1/execute-api/aws4_request, SignedHeaders=host;x-amz-date, Signature=be161e0053c676970d25d52a5fcce10e67e7f3eb038bb383da77c2dc959ac12b",
+			}
+		};
+
+		axios(nearbyBarsConfig)
+			.then(function (response) {
+				// console.log(JSON.stringify(response.data));
+				setNearbyBars(response.data);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }, [locationInfo]);
+
 
 	function renderHeader() {
 		return (
@@ -42,7 +92,7 @@ const ShopCarousel = (props) => {
 	}
 
 	function renderItem({ item, index }) {
-		const { name, image, _id, location, address } = item;
+		const { name, icon, _id, location, address } = item;
 		return (
 			<Pressable
 				activeOpacity={1}
@@ -54,7 +104,7 @@ const ShopCarousel = (props) => {
 					})
 				}
 			>
-				<ImageBackground source={{ uri: image }} style={styles.image}>
+				<ImageBackground source={{ uri: icon }} style={styles.image}>
 					<View style={styles.lowerContainer}>
 						<View>
 							<Text style={styles.titleText} numberOfLines={1}>
@@ -92,7 +142,7 @@ const ShopCarousel = (props) => {
 				keyExtractor={(item) => item?._id}
 				style={[styles.carousel, style]}
 				ref={carouselRef}
-				data={TestData}
+				data={nearbyBars}
 				renderItem={renderItem}
 				itemWidth={ITEM_WIDTH}
 				separatorWidth={SEPARATOR_WIDTH}

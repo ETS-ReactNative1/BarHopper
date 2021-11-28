@@ -5,7 +5,11 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 
 
-const FiltersScreen = () => {
+const FiltersScreen = ({route}) => {
+	const [locationInfo, setLocationInfo] = React.useState({
+		latitude: route.params.latitude,
+		longitude: route.params.longitude
+	});
 
 	const [checkboxState, setCheckboxState] = useState({
 			line: [],
