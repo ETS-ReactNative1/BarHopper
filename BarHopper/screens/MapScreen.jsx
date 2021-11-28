@@ -45,14 +45,8 @@ export default function MapScreen() {
 		}
 	);
 
-	const geoSuccess = (position) => {
-		setLocationInfo({
-			latitude: position.coords.latitude,
-			longitude: position.coords.longitude
-		});
-	};
 	const geoFailure = (err) => {
-		consolr.log(err);
+		console.log(err);
 		setLocationInfo({ error: err.message });
 	};
 
@@ -72,13 +66,7 @@ export default function MapScreen() {
 					let parsed = JSON.parse(stringified);
 					//console.log(parsed);
 					setEstablishments(parsed);
-					setSearched({
-						latitude:
-							establishments.results[0].geometry.location.lat,
-						longitude:
-							establishments.results[0].geometry.location.lat,
-						name: establishments.results[0].name
-					});
+
 					/*console.log(
 						'--------------------------------------------------------------------------'
 					);
@@ -158,6 +146,11 @@ export default function MapScreen() {
 									latitude: item.geometry.location.lat,
 									longitude: item.geometry.location.lng
 								}}
+								onPress={() =>
+									navigation.navigate('Bar Information', {
+										_id: item.place_id
+									})
+								}
 								image={require('../assets/carrot1.png')}
 								title={item.name}
 								anchor={{ x: 0.5, y: 0.7 }}

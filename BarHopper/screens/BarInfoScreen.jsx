@@ -18,12 +18,12 @@ const ITEM_WIDTH = 0.5 * windowWidth;
 const axios = require('axios');
 
 export default function BarInfoScreen({ route }) {
-	const { data } = route.params;
-	const { name, icon, _id } = data;
+	console.log({ route });
+	const { _id } = route.params;
 
 	const [barInfo, setBarInfo] = useState(null);
 
-	console.log(route);
+	// console.log('route: ' + route);
 	useEffect(() => {
 		try {
 			const config = {
@@ -60,7 +60,7 @@ export default function BarInfoScreen({ route }) {
 			// <SafeAreaView style={styles.container}>
 			<ScrollView style={{ flex: 1 }}>
 				<ImageBackground
-					source={{ uri: icon }}
+					source={{ uri: barInfo.icon }}
 					style={styles.storefront}
 				>
 					<View style={styles.lowerContainer}>
@@ -73,7 +73,7 @@ export default function BarInfoScreen({ route }) {
 							style={{ backgroundColor: '#009292', width: '85%' }}
 						>
 							<Text style={styles.title} numberOfLines={1}>
-								{name}
+								{barInfo.name}
 							</Text>
 						</View>
 					</View>

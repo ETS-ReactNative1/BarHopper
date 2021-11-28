@@ -37,7 +37,6 @@ const ShopCarousel = (props) => {
 	});
 	useEffect(() => {
 		try {
-			console.log('Location use effect');
 			Location.installWebGeolocationPolyfill();
 			navigator.geolocation.getCurrentPosition(
 				(position) =>
@@ -59,10 +58,9 @@ const ShopCarousel = (props) => {
 			console.log(e);
 		}
 	}, []);
-	console.log(locationInfo);
+
 	useEffect(() => {
 		try {
-			console.log('API use effect');
 			const nearbyBarsConfig = {
 				method: 'get',
 				url: `https://c6jxkilx8a.execute-api.us-east-1.amazonaws.com/dev/bars?lat=${locationInfo.latitude}&long=${locationInfo.longitude}&radius=1500`,
@@ -108,8 +106,7 @@ const ShopCarousel = (props) => {
 				style={styles.item}
 				onPress={() =>
 					navigation.navigate('Bar Information', {
-						uuid: { _id },
-						data: item
+						_id: _id
 					})
 				}
 			>
