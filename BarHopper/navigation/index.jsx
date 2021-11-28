@@ -61,7 +61,10 @@ function RootNavigator() {
 			/>
 			<Stack.Group screenOptions={{ presentation: 'modal' }}>
 				<Stack.Screen name="Profile" component={ProfileScreen} />
-				<Stack.Screen name="BarInfo" component={BarInfoScreen} />
+				<Stack.Screen
+					name="Bar Information"
+					component={BarInfoScreen}
+				/>
 				<Stack.Screen name="Settings" component={SettingsScreen} />
 				<Stack.Screen name="Favorites" component={FavoritesScreen} />
 				<Stack.Screen

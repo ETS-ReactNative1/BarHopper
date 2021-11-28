@@ -47,17 +47,17 @@ app.get("/bars", function (req, res) {
 
       response.data.results.forEach((bar) => {
         let newBar = {
+          _id: bar["place_id"],
           name: bar["name"],
+          rating: bar["rating"],
           location: bar["geometry"]["location"],
-          icon: bar["icon"],
+          icon: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${bar.photos[0].photo_reference}&sensor=false&maxheight=${bar.photos[0].height}&maxwidth=${bar.photos[0].width}&key=${process.env.GOOGLE_API_KEY}`,
           address: bar["formatted_address"],
           phone_number: bar["formatted_phone_number"],
           open_time: bar["opening_hours"],
           vaccination_protocols: "show a vaccination card",
         };
         results.push(newBar);
-        // if uuid is in the table
-        // add attributes to current object
       });
 
       res.json(results);
@@ -103,26 +103,33 @@ app.get("/bars/:id", function (req, res) {
       getItem()
         .then((data) => {
           let result = {
-            name: response.data.result["name"],
-            location: response.data.result["geometry"]["location"],
-            address: response.data.result["formatted_address"],
-            phone_number: response.data.result["formatted_phone_number"],
-            open_time: response.data.result["opening_hours"]["periods"],
+            name: response.data.result?.name,
+            rating: response.data.result?.rating,
+            location: response.data.result?.geometry.location,
+            address: response.data.result?.formatted_address,
+            phone_number: response.data.result?.formatted_phone_number,
+            open_time: response.data.result.opening_hours?.periods,
             vaccination_protocols: "show a vaccination card",
           };
 
-          result["vibe"] = data.Item.vibe ? data.Item.vibe : [];
-          result["line_attribute"] = data.Item.line_attribute
-            ? data.Item.line_attribute
-            : [];
-          result["music_playing"] = data.Item.music_playing
-            ? data.Item.music_playing
-            : [];
+          result["vibe"] = data.Item?.vibe;
+          result["line_attribute"] = data.Item?.line_attribute;
+          result["music_playing"] = data.Item?.music_playing;
 
           return res.json(result);
         })
         .catch((error) => {
-          return res.json(JSON.stringify(error));
+          let result = {
+            name: response.data.result?.name,
+            rating: response.data.result?.rating,
+            location: response.data.result?.geometry.location,
+            address: response.data.result?.formatted_address,
+            phone_number: response.data.result?.formatted_phone_number,
+            open_time: response.data.result.opening_hours?.periods,
+            vaccination_protocols: "show a vaccination card",
+          };
+
+          return res.json(result);
         });
     })
     .catch(function (error) {
@@ -184,117 +191,113 @@ app.post("/bars/:id", function (req, res) {
 app.put("/bars/:id", function (req, res) {
   verify.str(req.params.id);
 
-  if (req.query.line_attribute && verify.str(req.query.line_attribute)) {
-    let new_line_attribute = req.query.line_attribute;
+  const get_params = {
+    TableName: "BAR_TABLE",
+    Key: {
+      uuid: req.params.id,
+    },
+  };
 
-    const params = {
-      TableName: "BAR_TABLE",
-      Key: {
-        uuid: req.params.id,
-      },
-
-      UpdateExpression:
-        "SET #line_attribute = list_append(#line_attribute, :newAttribute)",
-      ExpressionAttributeNames: {
-        "#line_attribute": "line_attribute",
-      },
-      ExpressionAttributeValues: {
-        ":newAttribute": [`${new_line_attribute}`],
-      },
-      ReturnValues: "ALL_NEW",
-    };
-
-    async function updateItem() {
-      try {
-        await docClient.update(params).promise();
-      } catch (err) {
-        return err;
-      }
+  async function getItem() {
+    try {
+      const data = await docClient.get(get_params).promise();
+      return data;
+    } catch (err) {
+      return err;
     }
-
-    updateItem()
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((error) => {
-        return res.json(JSON.stringify(error));
-      });
   }
 
-  if (req.query.music_playing && verify.str(req.query.music_playing)) {
-    let new_music_playing = req.query.music_playing;
+  //fetch existing attributes from db
+  getItem()
+    .then((data) => {
+      let line_attribute_list =
+        req.query.line_attribute && verify.str(req.query.line_attribute)
+          ? data.Item?.vibe
+          : [];
 
-    const params = {
-      TableName: "BAR_TABLE",
-      Key: {
-        uuid: req.params.id,
-      },
+      line_attribute_list.push(req.query.line_attribute);
 
-      UpdateExpression:
-        "SET #music_playing = list_append(#music_playing, :newAttribute)",
-      ExpressionAttributeNames: {
-        "#music_playing": "music_playing",
-      },
-      ExpressionAttributeValues: {
-        ":newAttribute": [`${new_music_playing}`],
-      },
-      ReturnValues: "ALL_NEW",
-    };
+      let music_playing_list =
+        req.query.music_playing && verify.str(req.query.music_playing)
+          ? data.Item?.music_playing
+          : [];
 
-    async function updateItem() {
-      try {
-        await docClient.update(params).promise();
-      } catch (err) {
-        return err;
+      music_playing_list.push(req.query.music_playing);
+
+      let vibe_list =
+        req.query.vibe && verify.str(req.query.vibe) ? data.Item?.vibe : [];
+
+      vibe_list.push(req.query.vibe);
+
+      const params = {
+        TableName: "BAR_TABLE",
+
+        Item: {
+          uuid: req.params.id,
+          line_attribute: line_attribute_list,
+          music_playing: music_playing_list,
+          vibe: vibe_list,
+        },
+        ReturnValues: "ALL_OLD",
+      };
+
+      async function createItem() {
+        try {
+          await docClient.put(params).promise();
+        } catch (err) {
+          return err;
+        }
       }
-    }
 
-    updateItem()
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((error) => {
-        return res.json(JSON.stringify(error));
-      });
-  }
+      createItem()
+        .then((result) => {
+          return res.json(result);
+        })
+        .catch((error) => {
+          return res.json(JSON.stringify(error));
+        });
+    })
+    .catch((error) => {
+      //item not in db
+      let line_attribute_list =
+        req.query.line_attribute && verify.str(req.query.line_attribute)
+          ? [req.query.line_attribute]
+          : [];
+      let music_playing_list =
+        req.query.music_playing && verify.str(req.query.music_playing)
+          ? [req.query.music_playing]
+          : [];
+      let vibe_list =
+        req.query.vibe && verify.str(req.query.vibe) ? [req.query.vibe] : [];
 
-  if (req.query.vibe && verify.str(req.query.vibe)) {
-    let new_vibe = req.query.vibe;
+      const params = {
+        TableName: "BAR_TABLE",
 
-    const params = {
-      TableName: "BAR_TABLE",
-      Key: {
-        uuid: req.params.id,
-      },
+        Item: {
+          uuid: req.params.id,
+          line_attribute: line_attribute_list,
+          music_playing: music_playing_list,
+          vibe: vibe_list,
+        },
+        ReturnValues: "ALL_OLD",
+      };
 
-      UpdateExpression: "SET #vibe = list_append(#vibe, :newAttribute)",
-      ExpressionAttributeNames: {
-        "#vibe": "vibe",
-      },
-      ExpressionAttributeValues: {
-        ":newAttribute": [`${new_vibe}`],
-      },
-      ReturnValues: "ALL_NEW",
-    };
-
-    async function updateItem() {
-      try {
-        await docClient.update(params).promise();
-      } catch (err) {
-        return err;
+      async function createItem() {
+        try {
+          await docClient.put(params).promise();
+        } catch (err) {
+          return err;
+        }
       }
-    }
 
-    updateItem()
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((error) => {
-        return res.json(JSON.stringify(error));
-      });
-  }
-
-  res.json({ success: "put call succeed!", url: req.url, body: req.body });
+      createItem()
+        .then((result) => {
+          return res.json(result);
+        })
+        .catch((error) => {
+          return res.json(JSON.stringify(error));
+        });
+    });
 });
 
 // /****************************

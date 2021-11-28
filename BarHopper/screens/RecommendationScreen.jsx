@@ -5,23 +5,23 @@ import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 import CardCarousel from '../components/CardCarousel';
 import { FontAwesome } from '@expo/vector-icons';
+import * as Location from 'expo-location';
 
-export default function RecommendationScreen({ navigation}) {
+export default function RecommendationScreen({ navigation }) {
+	return (
+		<View style={styles.container}>
+			<ScrollView style={{ flex: 1 }}>
+				<CardCarousel header="Near You" subheader="Hoboken, NJ" />
 
-		return (
-			<View style={styles.container}>
-				<ScrollView style={{ flex: 1 }}>
-					<CardCarousel  header="Near You" subheader="Hoboken, NJ" />
+				<CardCarousel header="Short Line" subheader="Hoboken, NJ" />
 
-					<CardCarousel  header="Short Line" subheader="Hoboken, NJ" />
-
-					<CardCarousel
-						header="Vibes You Like"
-						subheader="You're into Country"
-					/>
-				</ScrollView>
-			</View>
-		);
+				<CardCarousel
+					header="Country Music"
+					subheader="You're into Country"
+				/>
+			</ScrollView>
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
