@@ -27,7 +27,7 @@ import BarInfoScreen from '../screens/BarInfoScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
-
+import * as Location from 'expo-location';
 // import LinkingConfiguration from './LinkingConfiguration';
 
 export default function Navigation({ colorScheme }) {
@@ -65,7 +65,10 @@ function RootNavigator() {
 				<Stack.Screen name="BarInfo" component={BarInfoScreen} />
 				<Stack.Screen name="Settings" component={SettingsScreen} />
 				<Stack.Screen name="Favorites" component={FavoritesScreen} />
-				<Stack.Screen name="Notifications" component={NotificationsScreen} />
+				<Stack.Screen
+					name="Notifications"
+					component={NotificationsScreen}
+				/>
 			</Stack.Group>
 		</Stack.Navigator>
 	);
@@ -80,6 +83,29 @@ const BottomTab = createBottomTabNavigator();
 function BottomTabNavigator() {
 	const colorScheme = useColorScheme();
 
+	const [locationInfo, setLocationInfo] = React.useState({
+		where: { latitude: null, longitude: null },
+		error: null
+	});
+	Location.installWebGeolocationPolyfill();
+	navigator.geolocation.getCurrentPosition(
+		(position) =>
+			setLocationInfo({
+				latitude: position.coords.latitude,
+				longitude: position.coords.longitude
+			}),
+		geoFailure,
+		{
+			enableHighAccuracy: true,
+			timeout: 20000
+		}
+	);
+	const geoFailure = (err) => {
+		consolr.log(err);
+		setLocationInfo({ error: err.message });
+	};
+
+	console.log(locationInfo);
 	return (
 		<BottomTab.Navigator
 			initialRouteName="Recommendations"
@@ -114,6 +140,7 @@ function BottomTabNavigator() {
 						/>
 					)
 				}}
+				initialParams={locationInfo}
 			/>
 			<BottomTab.Screen
 				name="Filters"

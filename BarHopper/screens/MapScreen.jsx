@@ -8,11 +8,18 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import * as Location from 'expo-location';
 import { Marker } from 'react-native-maps';
 const axios = require('axios');
+import { useNavigation } from '@react-navigation/native';
 
 export default function MapScreen() {
 	const [region, setRegion] = React.useState({
 		latitude: 40.74708623964595,
 		longitude: -74.0258037865746
+	});
+
+	const [barOpacity, setBarOpacity] = React.useState(1);
+
+	const [searched, setSearched] = React.useState({
+		where: { latitude: null, longitude: null, name: null, opacity: 1 }
 	});
 
 	const [establishments, setEstablishments] = useState(null);
@@ -26,12 +33,17 @@ export default function MapScreen() {
 		json_string: data,
 		error: null
 	});
+	const latitude = null;
 
 	Location.installWebGeolocationPolyfill();
-	navigator.geolocation.getCurrentPosition(geoSuccess, geoFailure, {
-		enableHighAccuracy: true,
-		timeout: 20000
-	});
+	navigator.geolocation.getCurrentPosition(
+		(position) => setLocationInfo({ latitude: position.coords.latitude }),
+		geoFailure,
+		{
+			enableHighAccuracy: true,
+			timeout: 20000
+		}
+	);
 
 	const geoSuccess = (position) => {
 		setLocationInfo({
@@ -40,8 +52,11 @@ export default function MapScreen() {
 		});
 	};
 	const geoFailure = (err) => {
+		consolr.log(err);
 		setLocationInfo({ error: err.message });
 	};
+
+	const navigation = useNavigation();
 
 	useEffect(() => {
 		try {
@@ -50,6 +65,7 @@ export default function MapScreen() {
 				url: 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=bar&location=${locationInfo.latitude}%2C${locationInfo.longitude}&radius=3000&key=AIzaSyADaQtqQonJgl5UGWltQxWWU9qSYnK1EFM',
 				headers: {}
 			};
+			console.log(locationInfo);
 			axios(config)
 				.then(function (response) {
 					//console.log(response);
@@ -57,6 +73,13 @@ export default function MapScreen() {
 					let parsed = JSON.parse(stringified);
 					//console.log(parsed);
 					setEstablishments(parsed);
+					setSearched({
+						latitude:
+							establishments.results[0].geometry.location.lat,
+						longitude:
+							establishments.results[0].geometry.location.lat,
+						name: establishments.results[0].name
+					});
 					/*console.log(
 						'--------------------------------------------------------------------------'
 					);
@@ -89,9 +112,13 @@ export default function MapScreen() {
 					}}
 					onPress={(data, details = null) => {
 						// 'details' is provided when fetchDetails = true
-						let stringified = JSON.stringify(details);
+						/*let stringified = JSON.stringify(data);
 						let parsed = JSON.parse(stringified);
-						console.log(parsed.geometry.location.lat);
+
+						console.log(parsed.place_id);
+						navigation.navigate('BarInfo', {
+							uuid: parsed.place_id
+						});*/
 					}}
 					query={{
 						key: 'AIzaSyADaQtqQonJgl5UGWltQxWWU9qSYnK1EFM',
@@ -127,6 +154,7 @@ export default function MapScreen() {
 						return (
 							<Marker
 								key={index}
+								opacity={barOpacity}
 								coordinate={{
 									latitude: item.geometry.location.lat,
 									longitude: item.geometry.location.lng
@@ -134,6 +162,7 @@ export default function MapScreen() {
 								image={require('../assets/carrot1.png')}
 								title={item.name}
 								anchor={{ x: 0.5, y: 0.7 }}
+								calloutAnchor={{ x: 0.5, y: 0.4 }}
 							/>
 						);
 					})}
