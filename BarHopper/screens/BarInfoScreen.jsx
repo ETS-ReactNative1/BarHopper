@@ -7,72 +7,52 @@ import {
 	SectionList,
 	StyleSheet,
 	Dimensions,
-	ImageBackground
+	ImageBackground,
+	Pressable
 } from 'react-native';
 import { Divider, ListItem, Icon } from 'react-native-elements';
 import { SafeAreaView, Text, View } from '../components/Themed';
 
 const { width: windowWidth } = Dimensions.get('window');
 const ITEM_WIDTH = 0.5 * windowWidth;
-const axios = require("axios");
+const axios = require('axios');
 
 export default function BarInfoScreen({ route }) {
 	const { data } = route.params;
 	const {
 		name,
-		image,
+		icon,
 		_id,
-		location,
-		open_time,
-		close_time,
-		phone_number,
-		vaccination_protocols
 	} = data;
 
-	//temp list to validate layout; this should be deleted during integration
-	const DATA = [
-		{
-			title: 'Line',
-			data: ['Long']
-		},
-		{
-			title: 'Music',
-			data: ['Hip Hop', 'Dubstep', 'R&B']
-		}
-	];
-
+	const [barInfo, setBarInfo] = useState(null);
 	useEffect(() => {
-		let isMounted = true;
-    try {
 
+	try {
 
-			const config = {
-				method: "get",
-				url: "https://c6jxkilx8a.execute-api.us-east-1.amazonaws.com/dev/bars?lat=-33.8670522&long=151.1957362&radius=1500",
-				headers: {
+		const config = {
+			method: 'get',
+			url: `https://c6jxkilx8a.execute-api.us-east-1.amazonaws.com/dev/bars/${_id}`,
+			headers: {
 				"X-Amz-Date": "20211113T172707Z",
-				Authorization:
-				"AWS4-HMAC-SHA256 Credential=AKIAYS3YCLSS436J4VVF/20211113/us-east-1/execute-api/aws4_request, SignedHeaders=host;x-amz-date, Signature=be161e0053c676970d25d52a5fcce10e67e7f3eb038bb383da77c2dc959ac12b",
-				},
-			};
+				Authorization: "AWS4-HMAC-SHA256 Credential=AKIAYS3YCLSS436J4VVF/20211113/us-east-1/execute-api/aws4_request, SignedHeaders=host;x-amz-date, Signature=be161e0053c676970d25d52a5fcce10e67e7f3eb038bb383da77c2dc959ac12b",
+			}
+		};
 
-			axios(config)
-				.then(function (response) {
-					console.log(JSON.stringify(response.data));
-				})
-				.catch(function (error) {
-					console.log(error);
-				});
+		axios(config)
+			.then(function (response) {
+				console.log(response);
+				setBarInfo(response.data);
 
-		}
-    catch (e) {
-			console.log(e);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
     }
-    finally {
-			isMounted = false;
+    catch (e) {
+      console.log(e);
     }
   }, []);
-
 
 	// temp object, should be deleted during integration
 	const Item = ({ title }) => (
@@ -80,62 +60,73 @@ export default function BarInfoScreen({ route }) {
 			<Text style={styles.barAttribute}>{title}</Text>
 		</View>
 	);
+	if (barInfo) {
+		return (
+			// <SafeAreaView style={styles.container}>
+			<ScrollView style={{ flex: 1 }}>
+				<ImageBackground source={{ uri: icon }} style={styles.storefront}>
+						<View style={styles.lowerContainer}>
+							<View style={{backgroundColor: '#971984', width: '15%'}}>
+								<Text style={styles.rating}>{barInfo.rating}</Text>
+							</View>
+							<View style={{backgroundColor: '#009292', width: '85%'}}>
+								<Text style={styles.title} numberOfLines={1}>
+									{name}
+								</Text>
+							</View>
+						</View>
+					</ImageBackground>
+				<Pressable onPress={() =>
+						navigation.navigate('I am Here', {
+						})
+					}>
+					<Text>I am Here</Text>
+				</Pressable>
+				<Text style={styles.heading}>General Info</Text>
+				<View style={styles.boxesView}>
+					<View style={styles.vertical}>
+						<View style={{ marginHorizontal: 10 }}>
+						<Text style={styles.subHeader}>Hours</Text>
+						<Text style={styles.barMetaData}>
 
-	return (
-		// <SafeAreaView style={styles.container}>
-		<ScrollView style={{ flex: 1 }}>
-			<ImageBackground source={{ uri: image }} style={styles.storefront}>
-					<View style={styles.lowerContainer}>
-						<View style={{backgroundColor: '#971984', width: '20%'}}>
-							<Text style={styles.rating}>4.5/5</Text>
+						</Text>
 						</View>
-						<View style={{backgroundColor: '#009292', width: '80%'}}>
-							<Text style={styles.title} numberOfLines={1}>
-								{name}
-							</Text>
-						</View>
-					</View>
-				</ImageBackground>
-			<Text style={styles.heading}>General Info</Text>
-			<View style={styles.boxesView}>
-				<View style={styles.vertical}>
+					<Divider orientation="vertical" width={2} />
 					<View style={{ marginHorizontal: 10 }}>
-					<Text style={styles.subHeader}>Hours</Text>
-					<Text style={styles.barMetaData}>
-						{open_time} - {close_time}
-					</Text>
+						<Text style={styles.subHeader}>Distance</Text>
+						<Text style={styles.barMetaData}>0.2 Miles Away</Text>
 					</View>
-				<Divider orientation="vertical" width={2} />
-				<View style={{ marginHorizontal: 10 }}>
-					<Text style={styles.subHeader}>Distance</Text>
-					<Text style={styles.barMetaData}>0.2 Miles Away</Text>
+					</View>
+					<Divider orientation="horizontal" width={1} style={styles.divider} />
+					<Text style={styles.subHeader}>Address</Text>
+					<Text style={styles.barMetaData}>{barInfo.address}</Text>
+					<Divider orientation="horizontal" width={1} style={styles.divider} />
+					<Text style={styles.subHeader}>Phone Number</Text>
+					<Text style={styles.barMetaData}>{barInfo.phone_number}</Text>
 				</View>
-				</View>
-				<Divider orientation="horizontal" width={1} style={styles.divider} />
-				<Text style={styles.subHeader}>Address</Text>
-				<Text style={styles.barMetaData}>{location}</Text>
-				<Divider orientation="horizontal" width={1} style={styles.divider} />
-				<Text style={styles.subHeader}>Phone Number</Text>
-				<Text style={styles.barMetaData}>{phone_number}</Text>
-			</View>
-			<Text style={styles.heading}>Other Info</Text>
-			<View style={styles.boxesView}>
-				<Text style={styles.subHeader}>Line</Text>
-				<Text style={styles.barMetaData}>{location}</Text>
-				<Divider orientation="horizontal" width={1} style={styles.divider} />
-				<Text style={styles.subHeader}>Music</Text>
-				<Text style={styles.barMetaData}>{location}</Text>
-				<Divider orientation="horizontal" width={1} style={styles.divider} />
-				<Text style={styles.subHeader}>Vibe</Text>
-				<Text style={styles.barMetaData}>{location}</Text>
-				<Divider orientation="horizontal" width={1} style={styles.divider} />
-				<Text style={styles.subHeader}>COVID Precautions</Text>
-				<Text style={styles.barMetaData}>{location}</Text>
+				<Text style={styles.heading}>Other Info</Text>
+				<View style={styles.boxesView}>
+					<Text style={styles.subHeader}>Line</Text>
+					<Text style={styles.barMetaData}></Text>
+					<Divider orientation="horizontal" width={1} style={styles.divider} />
+					<Text style={styles.subHeader}>Music</Text>
+					<Text style={styles.barMetaData}></Text>
+					<Divider orientation="horizontal" width={1} style={styles.divider} />
+					<Text style={styles.subHeader}>Vibe</Text>
+					<Text style={styles.barMetaData}></Text>
+					<Divider orientation="horizontal" width={1} style={styles.divider} />
+					<Text style={styles.subHeader}>COVID Precautions</Text>
+					<Text style={styles.barMetaData}>{barInfo.vaccination_protocols}</Text>
 
-				</View>
-			<StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-	</ScrollView>
-	);
+					</View>
+				<StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+		</ScrollView>
+		);
+	}
+	else {
+		return <Text>Loading...</Text>
+	}
+
 }
 
 const styles = StyleSheet.create({

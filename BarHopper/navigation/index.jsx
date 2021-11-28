@@ -27,7 +27,6 @@ import BarInfoScreen from '../screens/BarInfoScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
-
 // import LinkingConfiguration from './LinkingConfiguration';
 
 export default function Navigation({ colorScheme }) {
@@ -62,10 +61,13 @@ function RootNavigator() {
 			/>
 			<Stack.Group screenOptions={{ presentation: 'modal' }}>
 				<Stack.Screen name="Profile" component={ProfileScreen} />
-				<Stack.Screen name="Bar Information" component={BarInfoScreen} />
+				<Stack.Screen name="BarInfo" component={BarInfoScreen} />
 				<Stack.Screen name="Settings" component={SettingsScreen} />
 				<Stack.Screen name="Favorites" component={FavoritesScreen} />
-				<Stack.Screen name="Notifications" component={NotificationsScreen} />
+				<Stack.Screen
+					name="Notifications"
+					component={NotificationsScreen}
+				/>
 			</Stack.Group>
 		</Stack.Navigator>
 	);
