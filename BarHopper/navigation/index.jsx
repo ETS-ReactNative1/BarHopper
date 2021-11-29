@@ -27,6 +27,7 @@ import BarInfoScreen from '../screens/BarInfoScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
+import IamHereScreenScreen from '../screens/IamHereScreen';
 // import LinkingConfiguration from './LinkingConfiguration';
 
 export default function Navigation({ colorScheme }) {
@@ -71,6 +72,7 @@ function RootNavigator() {
 					name="Notifications"
 					component={NotificationsScreen}
 				/>
+				<Stack.Screen name="I am Here" component={IamHereScreenScreen} />
 			</Stack.Group>
 		</Stack.Navigator>
 	);

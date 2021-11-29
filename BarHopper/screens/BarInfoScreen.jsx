@@ -12,15 +12,15 @@ import {
 } from 'react-native';
 import { Divider, ListItem, Icon } from 'react-native-elements';
 import { SafeAreaView, Text, View } from '../components/Themed';
+import { useNavigation } from '@react-navigation/native';
 
 const { width: windowWidth } = Dimensions.get('window');
 const ITEM_WIDTH = 0.5 * windowWidth;
 const axios = require('axios');
 
 export default function BarInfoScreen({ route }) {
-	console.log({ route });
 	const { _id } = route.params;
-
+	const navigation = useNavigation();
 	const [barInfo, setBarInfo] = useState(null);
 
 	// console.log('route: ' + route);
@@ -38,7 +38,6 @@ export default function BarInfoScreen({ route }) {
 
 			axios(config)
 				.then(function (response) {
-					console.log(response);
 					setBarInfo(response.data);
 				})
 				.catch(function (error) {
@@ -55,7 +54,10 @@ export default function BarInfoScreen({ route }) {
 			<Text style={styles.barAttribute}>{title}</Text>
 		</View>
 	);
+
+
 	if (barInfo) {
+		console.log(barInfo);
 		return (
 			// <SafeAreaView style={styles.container}>
 			<ScrollView style={{ flex: 1 }}>
@@ -78,29 +80,8 @@ export default function BarInfoScreen({ route }) {
 						</View>
 					</View>
 				</ImageBackground>
-				<Pressable onPress={() => navigation.navigate('I am Here', {})}>
-					<Text>I am Here</Text>
-				</Pressable>
 				<Text style={styles.heading}>General Info</Text>
 				<View style={styles.boxesView}>
-					<View style={styles.vertical}>
-						<View style={{ marginHorizontal: 10 }}>
-							<Text style={styles.subHeader}>Hours</Text>
-							<Text style={styles.barMetaData}></Text>
-						</View>
-						<Divider orientation="vertical" width={2} />
-						<View style={{ marginHorizontal: 10 }}>
-							<Text style={styles.subHeader}>Distance</Text>
-							<Text style={styles.barMetaData}>
-								0.2 Miles Away
-							</Text>
-						</View>
-					</View>
-					<Divider
-						orientation="horizontal"
-						width={1}
-						style={styles.divider}
-					/>
 					<Text style={styles.subHeader}>Address</Text>
 					<Text style={styles.barMetaData}>{barInfo.address}</Text>
 					<Divider
@@ -116,21 +97,21 @@ export default function BarInfoScreen({ route }) {
 				<Text style={styles.heading}>Other Info</Text>
 				<View style={styles.boxesView}>
 					<Text style={styles.subHeader}>Line</Text>
-					<Text style={styles.barMetaData}></Text>
+					<Text style={styles.barMetaData}>{barInfo?.line_attribute}</Text>
 					<Divider
 						orientation="horizontal"
 						width={1}
 						style={styles.divider}
 					/>
 					<Text style={styles.subHeader}>Music</Text>
-					<Text style={styles.barMetaData}></Text>
+					<Text style={styles.barMetaData}>{barInfo?.music_playing}</Text>
 					<Divider
 						orientation="horizontal"
 						width={1}
 						style={styles.divider}
 					/>
 					<Text style={styles.subHeader}>Vibe</Text>
-					<Text style={styles.barMetaData}></Text>
+					<Text style={styles.barMetaData}>{barInfo?.vibe}</Text>
 					<Divider
 						orientation="horizontal"
 						width={1}
@@ -138,9 +119,15 @@ export default function BarInfoScreen({ route }) {
 					/>
 					<Text style={styles.subHeader}>COVID Precautions</Text>
 					<Text style={styles.barMetaData}>
-						{barInfo.vaccination_protocols}
+						{barInfo?.vaccination_protocols}
 					</Text>
 				</View>
+				<View style={styles.logBox}>
+					<Pressable style={styles.button} onPress={() =>
+						navigation.navigate('I am Here', {barId: _id})}>
+						<Text style={styles.hereButtonText}>I am Here</Text>
+					</Pressable>
+      	</View>
 				<StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
 			</ScrollView>
 		);
@@ -226,5 +213,17 @@ const styles = StyleSheet.create({
 	},
 	boxesView: {
 		padding: 10
+	},
+	logBox: {
+    padding: 20,
+    marginTop: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#f0f0f0',
+    backgroundColor: '#009292'
+  },
+	hereButtonText: {
+		textAlign: 'center',
+		color: '#fff',
+		fontWeight: 'bold'
 	}
 });

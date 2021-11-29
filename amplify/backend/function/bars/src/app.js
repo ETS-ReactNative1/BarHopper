@@ -3,6 +3,7 @@ var awsServerlessExpressMiddleware = require("aws-serverless-express/middleware"
 var bodyParser = require("body-parser");
 var express = require("express");
 const verify = require("./util");
+require('dotenv').config();
 
 AWS.config.update({
   region: "us-east-1", // replace with your region in AWS account
@@ -28,9 +29,9 @@ app.use(function (req, res, next) {
  **********************/
 
 app.get("/bars", function (req, res) {
-  //TODO: Add Error Handling
+  //Error Handling
   if (!req.query.lat || !req.query.long || !req.query.radius) {
-    res.json({ error: "invalid paramters" });
+    res.json({ error: "invalid parameters" });
   }
 
   let axios = require("axios");
@@ -44,8 +45,8 @@ app.get("/bars", function (req, res) {
   axios(config)
     .then(function (response) {
       let results = [];
-
       response.data.results.forEach((bar) => {
+        console.log(bar);
         let newBar = {
           _id: bar["place_id"],
           name: bar["name"],
@@ -54,22 +55,62 @@ app.get("/bars", function (req, res) {
           icon: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${bar.photos[0].photo_reference}&sensor=false&maxheight=${bar.photos[0].height}&maxwidth=${bar.photos[0].width}&key=${process.env.GOOGLE_API_KEY}`,
           address: bar["formatted_address"],
           phone_number: bar["formatted_phone_number"],
-          open_time: bar["opening_hours"],
+          // open_time: bar["opening_hours"],
           vaccination_protocols: "show a vaccination card",
         };
-        results.push(newBar);
+        if (!req.query.filter_by_short_line) {
+          results.push(newBar);
+        } else {
+          let line_config = {
+            method: "get",
+            url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${newBar._id}&key=${process.env.GOOGLE_API_KEY}`,
+            headers: {},
+          };
+          axios(line_config)
+            .then(function (response) {
+              const params = {
+                TableName: "BAR_TABLE",
+                Key: {
+                  uuid: newBar._id,
+                },
+              };
+
+              async function getItem() {
+                try {
+                  const data = await docClient.get(params).promise();
+                  return data;
+                } catch (err) {
+                  return err;
+                }
+              }
+
+              getItem()
+                .then((data) => {
+                  // if (
+                  //   data.Item?.line_attribute[0] === "short" ||
+                  //   data.Item?.line_attribute[0] === "no line"
+                  // ) {
+                  results.push(newBar);
+                  // }
+                })
+                .catch((error) => {
+                  return res.json(error);
+                });
+            })
+            .catch(function (error) {
+              return res.json({ error });
+            });
+        }
       });
 
-      res.json(results);
+      return res.json(results);
+
+      // res.json(results);
     })
     .catch(function (error) {
       res.json({ error });
     });
 });
-
-// app.get("*", function (req, res) {
-//   res.json({ success: "* route", url: req.url });
-// });
 
 app.get("/bars/:id", function (req, res) {
   verify.str(req.params.id);
@@ -108,7 +149,8 @@ app.get("/bars/:id", function (req, res) {
             location: response.data.result?.geometry.location,
             address: response.data.result?.formatted_address,
             phone_number: response.data.result?.formatted_phone_number,
-            open_time: response.data.result.opening_hours?.periods,
+            icon: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${response.data.result.photos[0].photo_reference}&sensor=false&maxheight=${response.data.result.photos[0].height}&maxwidth=${response.data.result.photos[0].width}&key=${process.env.GOOGLE_API_KEY}`,
+            // open_time: response.data.result.opening_hours?.periods,
             vaccination_protocols: "show a vaccination card",
           };
 
@@ -125,7 +167,7 @@ app.get("/bars/:id", function (req, res) {
             location: response.data.result?.geometry.location,
             address: response.data.result?.formatted_address,
             phone_number: response.data.result?.formatted_phone_number,
-            open_time: response.data.result.opening_hours?.periods,
+            // open_time: response.data.result.opening_hours?.periods,
             vaccination_protocols: "show a vaccination card",
           };
 
@@ -210,33 +252,33 @@ app.put("/bars/:id", function (req, res) {
   //fetch existing attributes from db
   getItem()
     .then((data) => {
-      let line_attribute_list =
+      let line_attribute =
         req.query.line_attribute && verify.str(req.query.line_attribute)
-          ? data.Item?.vibe
-          : [];
+          ? data.Item?.line_attribute
+          : '';
 
-      line_attribute_list.push(req.query.line_attribute);
+      line_attribute = req.query.line_attribute;
 
-      let music_playing_list =
+      let music_playing =
         req.query.music_playing && verify.str(req.query.music_playing)
           ? data.Item?.music_playing
-          : [];
+          : '';
 
-      music_playing_list.push(req.query.music_playing);
+      music_playing = req.query.music_playing;
 
-      let vibe_list =
-        req.query.vibe && verify.str(req.query.vibe) ? data.Item?.vibe : [];
+      let vibe =
+        req.query.vibe && verify.str(req.query.vibe) ? data.Item?.vibe : '';
 
-      vibe_list.push(req.query.vibe);
+      vibe = req.query.vibe;
 
       const params = {
         TableName: "BAR_TABLE",
 
         Item: {
           uuid: req.params.id,
-          line_attribute: line_attribute_list,
-          music_playing: music_playing_list,
-          vibe: vibe_list,
+          line_attribute: line_attribute,
+          music_playing: music_playing,
+          vibe: vibe,
         },
         ReturnValues: "ALL_OLD",
       };
@@ -251,6 +293,7 @@ app.put("/bars/:id", function (req, res) {
 
       createItem()
         .then((result) => {
+          console.log();
           return res.json(result);
         })
         .catch((error) => {
@@ -259,25 +302,25 @@ app.put("/bars/:id", function (req, res) {
     })
     .catch((error) => {
       //item not in db
-      let line_attribute_list =
+      let line_attribute =
         req.query.line_attribute && verify.str(req.query.line_attribute)
-          ? [req.query.line_attribute]
-          : [];
-      let music_playing_list =
+          ? req.query.line_attribute
+          : '';
+      let music_playing =
         req.query.music_playing && verify.str(req.query.music_playing)
-          ? [req.query.music_playing]
-          : [];
-      let vibe_list =
-        req.query.vibe && verify.str(req.query.vibe) ? [req.query.vibe] : [];
+          ? req.query.music_playing
+          : '';
+      let vibe =
+        req.query.vibe && verify.str(req.query.vibe) ? req.query.vibe : '';
 
       const params = {
         TableName: "BAR_TABLE",
 
         Item: {
           uuid: req.params.id,
-          line_attribute: line_attribute_list,
-          music_playing: music_playing_list,
-          vibe: vibe_list,
+          line_attribute: line_attribute,
+          music_playing: music_playing,
+          vibe: vibe,
         },
         ReturnValues: "ALL_OLD",
       };

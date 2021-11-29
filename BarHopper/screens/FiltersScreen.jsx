@@ -7,7 +7,8 @@ const FiltersScreen = () => {
 	const [checkboxState, setCheckboxState] = useState({
 		line: [],
 		music: [],
-		covid: []
+		covid: [],
+		vibes: []
 	});
 	const carouselRef = useRef(null);
 	const navigation = useNavigation();
@@ -45,7 +46,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: ['long', ...checkboxState.line],
 									music: checkboxState.music,
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							} else {
 								const lines = checkboxState.line.filter(
@@ -54,7 +56,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: [...lines],
 									music: checkboxState.music,
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							}
 						}}
@@ -73,7 +76,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: ['short', ...checkboxState.line],
 									music: checkboxState.music,
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							} else {
 								const lines = checkboxState.line.filter(
@@ -82,7 +86,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: [...lines],
 									music: checkboxState.music,
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							}
 						}}
@@ -101,7 +106,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: ['no line', ...checkboxState.line],
 									music: checkboxState.music,
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							} else {
 								const lines = checkboxState.line.filter(
@@ -110,35 +116,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: [...lines],
 									music: checkboxState.music,
-									covid: checkboxState.covid
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Average"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: ['average', ...checkboxState.line],
-									music: checkboxState.music,
-									covid: checkboxState.covid
-								});
-							} else {
-								const lines = checkboxState.line.filter(
-									(element) => element !== 'average'
-								);
-								setCheckboxState({
-									line: [...lines],
-									music: checkboxState.music,
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							}
 						}}
@@ -160,7 +139,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: ['country', ...checkboxState.music],
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							} else {
 								const musics = checkboxState.music.filter(
@@ -169,7 +149,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: [...musics],
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							}
 						}}
@@ -188,7 +169,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: ['hip hop', ...checkboxState.music],
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							} else {
 								const musics = checkboxState.music.filter(
@@ -197,7 +179,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: [...musics],
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							}
 						}}
@@ -216,7 +199,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: ['live', ...checkboxState.music],
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							} else {
 								const musics = checkboxState.music.filter(
@@ -225,7 +209,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: [...musics],
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							}
 						}}
@@ -244,7 +229,8 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: ['edm', ...checkboxState.music],
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
 								});
 							} else {
 								const musics = checkboxState.music.filter(
@@ -253,7 +239,242 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: [...musics],
-									covid: checkboxState.covid
+									covid: checkboxState.covid,
+									vibes: checkboxState.vibes,
+								});
+							}
+						}}
+					/>
+				</View>
+				<Text style={styles.heading}>Vibes</Text>
+				<View style={styles.boxesView}>
+					<BouncyCheckbox
+						style={styles.checkbox}
+						textStyle={{
+							textDecorationLine: 'none'
+						}}
+						size={25}
+						fillColor="#009292"
+						unfillColor="#FFFFFF"
+						text="Club"
+						onPress={(isChecked: boolean) => {
+							if (isChecked) {
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [
+										'club',
+										...checkboxState.vibes
+									]
+								});
+							} else {
+								const vibess = checkboxState.vibes.filter(
+									(element) => element !== 'club'
+								);
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [...vibess]
+								});
+							}
+						}}
+					/>
+					<BouncyCheckbox
+						style={styles.checkbox}
+						textStyle={{
+							textDecorationLine: 'none'
+						}}
+						size={25}
+						fillColor="#009292"
+						unfillColor="#FFFFFF"
+						text="Dive"
+						onPress={(isChecked: boolean) => {
+							if (isChecked) {
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [
+										'dive',
+										...checkboxState.vibes
+									]
+								});
+							} else {
+								const vibess = checkboxState.vibes.filter(
+									(element) => element !== 'dive'
+								);
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [...vibess]
+								});
+							}
+						}}
+					/>
+					<BouncyCheckbox
+						style={styles.checkbox}
+						textStyle={{
+							textDecorationLine: 'none'
+						}}
+						size={25}
+						fillColor="#009292"
+						unfillColor="#FFFFFF"
+						text="Sports"
+						onPress={(isChecked: boolean) => {
+							if (isChecked) {
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [
+										'sports',
+										...checkboxState.vibes
+									]
+								});
+							} else {
+								const vibess = checkboxState.vibes.filter(
+									(element) => element !== 'sports'
+								);
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [...vibess]
+								});
+							}
+						}}
+					/>
+					<BouncyCheckbox
+						style={styles.checkbox}
+						textStyle={{
+							textDecorationLine: 'none'
+						}}
+						size={25}
+						fillColor="#009292"
+						unfillColor="#FFFFFF"
+						text="Live Music"
+						onPress={(isChecked: boolean) => {
+							if (isChecked) {
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [
+										'live music',
+										...checkboxState.vibes
+									]
+								});
+							} else {
+								const vibess = checkboxState.vibes.filter(
+									(element) => element !== 'live music'
+								);
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [...vibess]
+								});
+							}
+						}}
+					/>
+					<BouncyCheckbox
+						style={styles.checkbox}
+						textStyle={{
+							textDecorationLine: 'none'
+						}}
+						size={25}
+						fillColor="#009292"
+						unfillColor="#FFFFFF"
+						text="Resturant"
+						onPress={(isChecked: boolean) => {
+							if (isChecked) {
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [
+										'resturant',
+										...checkboxState.vibes
+									]
+								});
+							} else {
+								const vibess = checkboxState.vibes.filter(
+									(element) => element !== 'resturant'
+								);
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [...vibess]
+								});
+							}
+						}}
+					/>
+					<BouncyCheckbox
+						style={styles.checkbox}
+						textStyle={{
+							textDecorationLine: 'none'
+						}}
+						size={25}
+						fillColor="#009292"
+						unfillColor="#FFFFFF"
+						text="College"
+						onPress={(isChecked: boolean) => {
+							if (isChecked) {
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [
+										'college',
+										...checkboxState.vibes
+									]
+								});
+							} else {
+								const vibess = checkboxState.vibes.filter(
+									(element) => element !== 'college'
+								);
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [...vibess]
+								});
+							}
+						}}
+					/>
+					<BouncyCheckbox
+						style={styles.checkbox}
+						textStyle={{
+							textDecorationLine: 'none'
+						}}
+						size={25}
+						fillColor="#009292"
+						unfillColor="#FFFFFF"
+						text="Classy"
+						onPress={(isChecked: boolean) => {
+							if (isChecked) {
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [
+										'classy',
+										...checkboxState.vibes
+									]
+								});
+							} else {
+								const vibess = checkboxState.vibes.filter(
+									(element) => element !== 'classy'
+								);
+								setCheckboxState({
+									line: checkboxState.line,
+									music: checkboxState.music,
+									covid: checkboxState.covid,
+									vibes: [...vibess]
 								});
 							}
 						}}
@@ -275,6 +496,7 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: checkboxState.music,
+									vibes: checkboxState.vibes,
 									covid: [
 										'vaccine mandate',
 										...checkboxState.covid
@@ -287,6 +509,7 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: checkboxState.music,
+									vibes: checkboxState.vibes,
 									covid: [...covids]
 								});
 							}
@@ -306,6 +529,7 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: checkboxState.music,
+									vibes: checkboxState.vibes,
 									covid: [
 										'masks required',
 										...checkboxState.covid
@@ -318,6 +542,7 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: checkboxState.music,
+									vibes: checkboxState.vibes,
 									covid: [...covids]
 								});
 							}
@@ -337,6 +562,7 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: checkboxState.music,
+									vibes: checkboxState.vibes,
 									covid: [
 										'no mandates',
 										...checkboxState.covid
@@ -349,6 +575,7 @@ const FiltersScreen = () => {
 								setCheckboxState({
 									line: checkboxState.line,
 									music: checkboxState.music,
+									vibes: checkboxState.vibes,
 									covid: [...covids]
 								});
 							}

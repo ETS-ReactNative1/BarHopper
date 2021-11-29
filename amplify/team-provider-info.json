@@ -18,7 +18,7 @@
       "function": {
         "bars": {
           "deploymentBucketName": "amplify-barhopperbackend-dev-165014-deployment",
-          "s3Key": "amplify-builds/bars-4c692b503073756b4b77-build.zip"
+          "s3Key": "amplify-builds/bars-75644372455a6d677743-build.zip"
         }
       }
     }
