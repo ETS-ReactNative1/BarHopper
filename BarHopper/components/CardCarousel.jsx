@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { createRef, useEffect, useState, useRef } from 'react';
 import {
 	StyleSheet,
 	Text,
@@ -25,64 +25,9 @@ const ITEM_WIDTH = 0.5 * windowWidth;
 const SEPARATOR_WIDTH = 10;
 
 const ShopCarousel = (props) => {
-	const { style, userLocation } = props;
+	const { style, barsData} = props;
 	const carouselRef = useRef(null);
 	const navigation = useNavigation();
-	const [nearbyBars, setNearbyBars] = useState([]);
-	const [shortLineBars, setBarsInfo] = useState([]);
-
-	const [locationInfo, setLocationInfo] = React.useState({
-		where: { latitude: null, longitude: null },
-		error: null
-	});
-	useEffect(() => {
-		try {
-			Location.installWebGeolocationPolyfill();
-			navigator.geolocation.getCurrentPosition(
-				(position) =>
-					setLocationInfo({
-						latitude: position.coords.latitude,
-						longitude: position.coords.longitude
-					}),
-				geoFailure,
-				{
-					enableHighAccuracy: true,
-					timeout: 20000
-				}
-			);
-			const geoFailure = (err) => {
-				consolr.log(err);
-				setLocationInfo({ error: err.message });
-			};
-		} catch (e) {
-			console.log(e);
-		}
-	}, []);
-
-	useEffect(() => {
-		try {
-			const nearbyBarsConfig = {
-				method: 'get',
-				url: `https://c6jxkilx8a.execute-api.us-east-1.amazonaws.com/dev/bars?lat=${locationInfo.latitude}&long=${locationInfo.longitude}&radius=1500`,
-				headers: {
-					'X-Amz-Date': '20211113T172707Z',
-					Authorization:
-						'AWS4-HMAC-SHA256 Credential=AKIAYS3YCLSS436J4VVF/20211113/us-east-1/execute-api/aws4_request, SignedHeaders=host;x-amz-date, Signature=be161e0053c676970d25d52a5fcce10e67e7f3eb038bb383da77c2dc959ac12b'
-				}
-			};
-
-			axios(nearbyBarsConfig)
-				.then(function (response) {
-					// console.log(JSON.stringify(response.data));
-					setNearbyBars(response.data);
-				})
-				.catch(function (error) {
-					console.log(error);
-				});
-		} catch (e) {
-			console.log(e);
-		}
-	}, [locationInfo]);
 
 	function renderHeader() {
 		return (
@@ -147,7 +92,7 @@ const ShopCarousel = (props) => {
 				keyExtractor={(item) => item?._id}
 				style={[styles.carousel, style]}
 				ref={carouselRef}
-				data={nearbyBars}
+				data={barsData}
 				renderItem={renderItem}
 				itemWidth={ITEM_WIDTH}
 				separatorWidth={SEPARATOR_WIDTH}
