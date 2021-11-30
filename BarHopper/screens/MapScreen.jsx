@@ -61,8 +61,8 @@ export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, s
 						setRegion({
 							latitude: newBar.location.latitude,
 							longitude: newBar.location.longitude,
-							latitudeDelta: 0.4,
-							longitudeDelta: 0.4
+							latitudeDelta: 0.04,
+							longitudeDelta: 0.04
 						})
 						setSearched({ didSearch: true, data: [newBar] });
 
