@@ -36,8 +36,8 @@ export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, s
 	const mapView = React.createRef();
 	const animateMap = () => {
 		mapView.current.animateToRegion({ // Takes a region object as parameter
-			longitude: 28.97916756570339,
-			latitude: 41,
+			longitude: searched.data.location.longitude,
+			latitude: searched.data.location.latitude,
 			latitudeDelta: 0.4,
 			longitudeDelta: 0.4,
 		}, 1000);
@@ -70,6 +70,7 @@ export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, s
 							id: parsed2.place_id
 
 						};
+
 						setSearched({ didSearch: true, data: [newBar] });
 
 					}
@@ -107,7 +108,7 @@ export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, s
 					provider="google"
 				>
 					{!searched.didSearch ? nearbyBars.map((item, index) => {
-						animateMap;
+
 						return (
 							<Marker
 								key={index}
@@ -127,6 +128,7 @@ export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, s
 							/>
 						);
 					}) : searched.data.map((item, index) => {
+
 
 						return (
 							<Marker
