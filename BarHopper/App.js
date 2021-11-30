@@ -75,7 +75,7 @@ const App = () => {
 		}
 	}, [locationInfo]);
 
-	return <Navigation colorScheme={colorScheme} locationInfo={locationInfo} nearbyBars={nearbyBars} />;
+	return <Navigation colorScheme={colorScheme} locationInfo={locationInfo} setLocationInfo={setLocationInfo} nearbyBars={nearbyBars} setNearbyBars={setNearbyBars} />;
 }
 
 const styles = StyleSheet.create({

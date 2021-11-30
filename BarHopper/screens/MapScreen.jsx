@@ -1,5 +1,5 @@
 import React, { createRef, useEffect, useState, useRef } from 'react';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { RefreshControl, StyleSheet, Animated, Dimensions, ScrollView, TextInput } from 'react-native';
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 
@@ -10,20 +10,39 @@ import { Marker } from 'react-native-maps';
 const axios = require('axios');
 import { useNavigation } from '@react-navigation/native';
 
-export default function MapScreen({ locationInfo, nearbyBars }) {
+export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, setNearbyBars }) {
 	const [region, setRegion] = React.useState({
 		latitude: 40.74708623964595,
 		longitude: -74.0258037865746
 	});
 
 
+	var [searched, setSearched] = React.useState({
+		didSearch: false,
+		data: {
+			location: {
+				latitude: null,
+				longitude: null,
+			},
+			name: null,
+			id: null
+		}
+	});
+	const mapRef = React.createRef();
 
 
 	const navigation = useNavigation();
 
+	const mapView = React.createRef();
+	const animateMap = () => {
+		mapView.current.animateToRegion({ // Takes a region object as parameter
+			longitude: 28.97916756570339,
+			latitude: 41,
+			latitudeDelta: 0.4,
+			longitudeDelta: 0.4,
+		}, 1000);
+	}
 
-
-	const mapRef = React.createRef();
 
 	if (Array.isArray(nearbyBars) && nearbyBars.length) {
 		return (
@@ -39,15 +58,24 @@ export default function MapScreen({ locationInfo, nearbyBars }) {
 					}}
 					onPress={(data, details = null) => {
 						// 'details' is provided when fetchDetails = true
-						let stringified = JSON.stringify(data);
-						let parsed = JSON.parse(stringified);
-						let newBar = [parsed];
-						console.log(parsed.place_id);
-						navigation.navigate('Map', {
-							locationInfo: { locationInfo },
-							nearbyBars: { newBar }
-						});
-					}}
+						let stringified1 = JSON.stringify(details);
+						let parsed1 = JSON.parse(stringified1);
+						let stringified2 = JSON.stringify(data);
+						let parsed2 = JSON.parse(stringified2);
+
+						console.log(parsed2);
+						let newBar = {
+							location: { latitude: parsed1.geometry.location.lat, longitude: parsed1.geometry.location.lng },
+							name: parsed2.structured_formatting.main_text,
+							id: parsed2.place_id
+
+						};
+						setSearched({ didSearch: true, data: [newBar] });
+
+					}
+
+
+					}
 					query={{
 						key: 'AIzaSyAi2tanlhLgqPbw8j-0lQ1zNCerLz59IZg',
 						language: 'en',
@@ -67,7 +95,7 @@ export default function MapScreen({ locationInfo, nearbyBars }) {
 					}}
 				/>
 				<MapView
-					ref={mapRef}
+					ref={mapView}
 					style={styles.map}
 					region={{
 						latitude: 40.74708623964595,
@@ -78,7 +106,8 @@ export default function MapScreen({ locationInfo, nearbyBars }) {
 					showsUserLocation={true}
 					provider="google"
 				>
-					{nearbyBars.map((item, index) => {
+					{!searched.didSearch ? nearbyBars.map((item, index) => {
+						animateMap;
 						return (
 							<Marker
 								key={index}
@@ -88,7 +117,27 @@ export default function MapScreen({ locationInfo, nearbyBars }) {
 								}}
 								onPress={() =>
 									navigation.navigate('Bar Information', {
-										_id: item.place_id
+										_id: item._id
+									})
+								}
+								image={require('../assets/carrot1.png')}
+								title={item.name}
+								anchor={{ x: 0.5, y: 0.7 }}
+								calloutAnchor={{ x: 0.5, y: 0.4 }}
+							/>
+						);
+					}) : searched.data.map((item, index) => {
+
+						return (
+							<Marker
+								key={index}
+								coordinate={{
+									latitude: item.location.latitude,
+									longitude: item.location.longitude
+								}}
+								onPress={() =>
+									navigation.navigate('Bar Information', {
+										_id: item.id
 									})
 								}
 								image={require('../assets/carrot1.png')}
