@@ -57,7 +57,7 @@ export default function BarInfoScreen({ route }) {
 
 
 	if (barInfo) {
-		console.log(barInfo);
+
 		return (
 			// <SafeAreaView style={styles.container}>
 			<ScrollView style={{ flex: 1 }}>

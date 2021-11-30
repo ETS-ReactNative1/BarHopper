@@ -2,642 +2,276 @@ import React, { useState, useRef } from 'react';
 import { StyleSheet, View, Text, Pressable, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import BouncyCheckboxGroup, {
+  ICheckboxButton,
+} from "react-native-bouncy-checkbox-group";
 
+
+const _iconStyle = (borderColor: string) => ({
+  height: 25,
+  width: 25,
+  borderRadius: 25,
+  borderColor: borderColor,
+});
+
+const styles = {
+  container: { marginTop: 24 },
+  verticalStyle: { marginTop: 16 },
+  textStyle: { textDecorationLine: "none" },
+  iconImageStyle: { height: 20, width: 20 },
+};
+
+const lineAttributes: ICheckboxButton[] = [
+  {
+    id: 0,
+    text: "Long",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  },
+  {
+    id: 1,
+    text: "Short",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  },
+  {
+    id: 2,
+    text: "No Line",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  }
+];
+
+const musicAttributes: ICheckboxButton[] = [
+  {
+    id: 0,
+    text: "Country",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  },
+  {
+    id: 1,
+    text: "Hip Hop / R&B",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  },
+  {
+    id: 2,
+    text: "Live",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  },
+	{
+    id: 3,
+    text: "EDM",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  }
+];
+
+const VibesAttributes: ICheckboxButton[] = [
+  {
+    id: 0,
+    text: "Club",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  },
+  {
+    id: 1,
+    text: "Dive",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  },
+  {
+    id: 2,
+    text: "Sports",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  },
+	{
+    id: 3,
+    text: "Live Music",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  },
+	{
+    id: 4,
+    text: "Resturant",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  },
+	{
+    id: 5,
+    text: "College",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  },
+	{
+    id: 6,
+    text: "Classy",
+    fillColor: "#009292",
+    unfillColor: "#FFFFFF",
+    iconStyle: _iconStyle("#009292"),
+    textStyle: styles.textStyle,
+    style: styles.verticalStyle,
+    iconImageStyle: styles.iconImageStyle,
+  }
+];
 const FiltersScreen = () => {
 	const [checkboxState, setCheckboxState] = useState({
-		line: [],
-		music: [],
-		covid: [],
-		vibes: []
+		line: null,
+		music: null,
+		covid: null,
+		vibes: null
 	});
 	const carouselRef = useRef(null);
 	const navigation = useNavigation();
 	console.log(checkboxState);
 
 	return (
-		<View style={styles.container}>
-			<ScrollView style={{ flex: 1 }}>
-				<View
-					style={{
-						width: '100%',
-						backgroundColor: '#009292',
-						padding: 10,
-						marginBottom: 10,
-						marginTop: 10
-					}}
-				>
-					<Text style={styles.title}>
-						Use Filters to Find Your Crowd!
-					</Text>
-				</View>
-				<Text style={styles.heading}>LINE</Text>
-				<View style={styles.boxesView}>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Long"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: ['long', ...checkboxState.line],
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							} else {
-								const lines = checkboxState.line.filter(
-									(element) => element !== 'long'
-								);
-								setCheckboxState({
-									line: [...lines],
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Short"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: ['short', ...checkboxState.line],
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							} else {
-								const lines = checkboxState.line.filter(
-									(element) => element !== 'short'
-								);
-								setCheckboxState({
-									line: [...lines],
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="No Line"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: ['no line', ...checkboxState.line],
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							} else {
-								const lines = checkboxState.line.filter(
-									(element) => element !== 'no line'
-								);
-								setCheckboxState({
-									line: [...lines],
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							}
-						}}
-					/>
-				</View>
-				<Text style={styles.heading}>MUSIC</Text>
-				<View style={styles.boxesView}>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Country"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: ['country', ...checkboxState.music],
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							} else {
-								const musics = checkboxState.music.filter(
-									(element) => element !== 'country'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: [...musics],
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Hip Hop / R&B"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: ['hip hop', ...checkboxState.music],
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							} else {
-								const musics = checkboxState.music.filter(
-									(element) => element !== 'hip hop'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: [...musics],
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Live"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: ['live', ...checkboxState.music],
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							} else {
-								const musics = checkboxState.music.filter(
-									(element) => element !== 'live'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: [...musics],
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="EDM"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: ['edm', ...checkboxState.music],
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							} else {
-								const musics = checkboxState.music.filter(
-									(element) => element !== 'edm'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: [...musics],
-									covid: checkboxState.covid,
-									vibes: checkboxState.vibes,
-								});
-							}
-						}}
-					/>
-				</View>
-				<Text style={styles.heading}>Vibes</Text>
-				<View style={styles.boxesView}>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Club"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [
-										'club',
-										...checkboxState.vibes
-									]
-								});
-							} else {
-								const vibess = checkboxState.vibes.filter(
-									(element) => element !== 'club'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [...vibess]
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Dive"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [
-										'dive',
-										...checkboxState.vibes
-									]
-								});
-							} else {
-								const vibess = checkboxState.vibes.filter(
-									(element) => element !== 'dive'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [...vibess]
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Sports"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [
-										'sports',
-										...checkboxState.vibes
-									]
-								});
-							} else {
-								const vibess = checkboxState.vibes.filter(
-									(element) => element !== 'sports'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [...vibess]
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Live Music"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [
-										'live music',
-										...checkboxState.vibes
-									]
-								});
-							} else {
-								const vibess = checkboxState.vibes.filter(
-									(element) => element !== 'live music'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [...vibess]
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Resturant"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [
-										'resturant',
-										...checkboxState.vibes
-									]
-								});
-							} else {
-								const vibess = checkboxState.vibes.filter(
-									(element) => element !== 'resturant'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [...vibess]
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="College"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [
-										'college',
-										...checkboxState.vibes
-									]
-								});
-							} else {
-								const vibess = checkboxState.vibes.filter(
-									(element) => element !== 'college'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [...vibess]
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Classy"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [
-										'classy',
-										...checkboxState.vibes
-									]
-								});
-							} else {
-								const vibess = checkboxState.vibes.filter(
-									(element) => element !== 'classy'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									covid: checkboxState.covid,
-									vibes: [...vibess]
-								});
-							}
-						}}
-					/>
-				</View>
-				<Text style={styles.heading}>COVID PRECAUTIONS</Text>
-				<View style={styles.boxesView}>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Vaccine Mandate"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									vibes: checkboxState.vibes,
-									covid: [
-										'vaccine mandate',
-										...checkboxState.covid
-									]
-								});
-							} else {
-								const covids = checkboxState.covid.filter(
-									(element) => element !== 'vaccine mandate'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									vibes: checkboxState.vibes,
-									covid: [...covids]
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="Masks Required"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									vibes: checkboxState.vibes,
-									covid: [
-										'masks required',
-										...checkboxState.covid
-									]
-								});
-							} else {
-								const covids = checkboxState.covid.filter(
-									(element) => element !== 'masks required'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									vibes: checkboxState.vibes,
-									covid: [...covids]
-								});
-							}
-						}}
-					/>
-					<BouncyCheckbox
-						style={styles.checkbox}
-						textStyle={{
-							textDecorationLine: 'none'
-						}}
-						size={25}
-						fillColor="#009292"
-						unfillColor="#FFFFFF"
-						text="No Mandates"
-						onPress={(isChecked: boolean) => {
-							if (isChecked) {
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									vibes: checkboxState.vibes,
-									covid: [
-										'no mandates',
-										...checkboxState.covid
-									]
-								});
-							} else {
-								const covids = checkboxState.covid.filter(
-									(element) => element !== 'no mandates'
-								);
-								setCheckboxState({
-									line: checkboxState.line,
-									music: checkboxState.music,
-									vibes: checkboxState.vibes,
-									covid: [...covids]
-								});
-							}
-						}}
-					/>
-				</View>
-				<View style={styles.nextView}>
-					<Pressable
-						style={styles.nextButton}
-						onPress={() => console.log('hi')}
+		<ScrollView style={{ flex: 1 }}>
+			<View style={{ marginTop: 24, backgroundColor: '#009292', width: '100%', padding: 10 }}>
+        <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16, textAlign: 'center', fontWeight: 'bold' }}>
+          Select from the filters!
+        </Text>
+      </View>
+      <View style={{ marginLeft: 32, marginTop: 24 }}>
+        <Text style={{ color: "#a8a8ac", fontWeight: "500", fontSize: 16 }}>
+          Line Attributes
+        </Text>
+      </View>
+      <View
+        style={{
+          marginTop: 16,
+          marginLeft: 32,
+          justifyContent: "center",
+        }}
+      >
+        <BouncyCheckboxGroup
+          data={lineAttributes}
+          style={{ flexDirection: "column" }}
+          onChange={(selectedItem: ICheckboxButton) => {
+
+						setCheckboxState({
+							line: selectedItem.text,
+							music: checkboxState.music,
+							vibes: checkboxState.vibes,
+						});
+          }}
+        />
+      </View>
+			<View style={{ marginLeft: 32, marginTop: 24 }}>
+        <Text style={{ color: "#a8a8ac", fontWeight: "500", fontSize: 16 }}>
+          Music Attributes
+        </Text>
+      </View>
+      <View
+        style={{
+          marginTop: 16,
+          marginLeft: 32,
+          justifyContent: "center",
+        }}
+      >
+        <BouncyCheckboxGroup
+          data={musicAttributes}
+          style={{ flexDirection: "column" }}
+          onChange={(selectedItem: ICheckboxButton) => {
+
+						setCheckboxState({
+							line: checkboxState.line,
+							music: selectedItem.text,
+							vibes: checkboxState.vibes,
+						});
+          }}
+        />
+      </View>
+			<View style={{ marginLeft: 32, marginTop: 24 }}>
+        <Text style={{ color: "#a8a8ac", fontWeight: "500", fontSize: 16 }}>
+          Vibe Attributes
+        </Text>
+      </View>
+      <View
+        style={{
+          marginTop: 16,
+          marginLeft: 32,
+          justifyContent: "center",
+        }}
+      >
+        <BouncyCheckboxGroup
+          data={VibesAttributes}
+          style={{ flexDirection: "column" }}
+          onChange={(selectedItem: ICheckboxButton) => {
+
+						setCheckboxState({
+							line: checkboxState.line,
+							music: checkboxState.music,
+							vibes: selectedItem.text,
+						});
+          }}
+        />
+      </View>
+					<View style={{marginTop: 30, marginBottom: 40, alignItems: 'center'}}>
+						<Pressable
+						style={{padding: 10, backgroundColor: '#009292', width: '50%'}}
+						onPress={() => submitAttributes()}
 					>
-						<Text style={styles.nextButtonText}>Next</Text>
+						<Text style={{textAlign: 'center', color: '#ffffff', fontSize: 18, fontWeight: 'bold'}}>Submit</Text>
 					</Pressable>
 				</View>
-			</ScrollView>
-		</View>
+    </ScrollView>
 	);
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center'
-	},
-	checkbox: {
-		margin: 5,
-		borderColor: '#009292',
-		textDecorationLine: 'none'
-	},
-	title: {
-		fontSize: 20,
-		fontWeight: 'bold',
-		textAlign: 'center',
-		color: '#fefefe'
-	},
-	heading: {
-		padding: 10,
-		color: '#000000',
-		backgroundColor: '#d2e9e9',
-		borderStyle: 'solid',
-		borderWidth: 0.5,
-		borderColor: '#009292'
-	},
-	boxesView: {
-		padding: 10
-	},
-	nextButton: {
-		padding: 10,
-		backgroundColor: '#009292',
-		width: '50%'
-	},
-	nextButtonText: {
-		textAlign: 'center',
-		color: '#ffffff',
-		fontSize: 18,
-		fontWeight: 'bold'
-	},
-	nextView: {
-		marginTop: 10,
-		marginBottom: 10,
-		alignItems: 'center'
-	}
-});
 
 export default FiltersScreen;
