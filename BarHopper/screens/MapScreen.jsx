@@ -13,7 +13,9 @@ import { useNavigation } from '@react-navigation/native';
 export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, setNearbyBars }) {
 	const [region, setRegion] = React.useState({
 		latitude: 40.74708623964595,
-		longitude: -74.0258037865746
+		longitude: -74.0258037865746,
+		latitudeDelta: 0.0922,
+		longitudeDelta: 0.0421
 	});
 
 
@@ -28,20 +30,6 @@ export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, s
 			id: null
 		}
 	});
-	const mapRef = React.createRef();
-
-
-	const navigation = useNavigation();
-
-	const mapView = React.createRef();
-	const animateMap = () => {
-		mapView.current.animateToRegion({ // Takes a region object as parameter
-			longitude: searched.data.location.longitude,
-			latitude: searched.data.location.latitude,
-			latitudeDelta: 0.4,
-			longitudeDelta: 0.4,
-		}, 1000);
-	}
 
 
 	if (Array.isArray(nearbyBars) && nearbyBars.length) {
@@ -63,14 +51,19 @@ export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, s
 						let stringified2 = JSON.stringify(data);
 						let parsed2 = JSON.parse(stringified2);
 
-						console.log(parsed2);
+
 						let newBar = {
 							location: { latitude: parsed1.geometry.location.lat, longitude: parsed1.geometry.location.lng },
 							name: parsed2.structured_formatting.main_text,
 							id: parsed2.place_id
 
 						};
-
+						setRegion({
+							latitude: newBar.location.latitude,
+							longitude: newBar.location.longitude,
+							latitudeDelta: 0.4,
+							longitudeDelta: 0.4
+						})
 						setSearched({ didSearch: true, data: [newBar] });
 
 					}
@@ -96,14 +89,8 @@ export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, s
 					}}
 				/>
 				<MapView
-					ref={mapView}
 					style={styles.map}
-					region={{
-						latitude: 40.74708623964595,
-						longitude: -74.0258037865746,
-						latitudeDelta: 0.0922,
-						longitudeDelta: 0.0421
-					}}
+					region={region}
 					showsUserLocation={true}
 					provider="google"
 				>
@@ -128,7 +115,6 @@ export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, s
 							/>
 						);
 					}) : searched.data.map((item, index) => {
-
 
 						return (
 							<Marker
