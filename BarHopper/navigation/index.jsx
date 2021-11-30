@@ -30,13 +30,15 @@ import FavoritesScreen from '../screens/FavoritesScreen';
 import IamHereScreenScreen from '../screens/IamHereScreen';
 // import LinkingConfiguration from './LinkingConfiguration';
 
-export default function Navigation({ colorScheme }) {
+export default function Navigation({ colorScheme, locationInfo, nearbyBars }) {
+
+
 	return (
 		<NavigationContainer
 			// linking={LinkingConfiguration}
 			theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
 		>
-			<RootNavigator />
+			<RootNavigator locationInfo={locationInfo} nearbyBars={nearbyBars} />
 		</NavigationContainer>
 	);
 }
@@ -47,12 +49,12 @@ export default function Navigation({ colorScheme }) {
  */
 const Stack = createNativeStackNavigator();
 
-function RootNavigator() {
+function RootNavigator({ locationInfo, nearbyBars }) {
 	return (
 		<Stack.Navigator>
 			<Stack.Screen
 				name="Root"
-				component={BottomTabNavigator}
+				children={() => <BottomTabNavigator locationInfo={locationInfo} nearbyBars={nearbyBars} />}
 				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
@@ -84,7 +86,7 @@ function RootNavigator() {
  */
 const BottomTab = createBottomTabNavigator();
 
-function BottomTabNavigator() {
+function BottomTabNavigator({ locationInfo, nearbyBars }) {
 	const colorScheme = useColorScheme();
 
 	return (
@@ -110,7 +112,7 @@ function BottomTabNavigator() {
 			/>
 			<BottomTab.Screen
 				name="Map"
-				component={MapScreen}
+				children={() => <MapScreen locationInfo={locationInfo} nearbyBars={nearbyBars} />}
 				options={{
 					title: 'Map',
 					tabBarIcon: ({ color, size }) => (

@@ -10,82 +10,22 @@ import { Marker } from 'react-native-maps';
 const axios = require('axios');
 import { useNavigation } from '@react-navigation/native';
 
-export default function MapScreen() {
+export default function MapScreen({ locationInfo, nearbyBars }) {
 	const [region, setRegion] = React.useState({
 		latitude: 40.74708623964595,
 		longitude: -74.0258037865746
 	});
 
-	const [barOpacity, setBarOpacity] = React.useState(1);
 
-	const [searched, setSearched] = React.useState({
-		where: { latitude: null, longitude: null, name: null, opacity: 1 }
-	});
 
-	const [establishments, setEstablishments] = useState(null);
-
-	const [locationInfo, setLocationInfo] = React.useState({
-		where: { latitude: null, longitude: null },
-		error: null
-	});
-
-	const [data, setData] = React.useState({
-		json_string: data,
-		error: null
-	});
-	const latitude = null;
-
-	Location.installWebGeolocationPolyfill();
-	navigator.geolocation.getCurrentPosition(
-		(position) => setLocationInfo({ latitude: position.coords.latitude }),
-		geoFailure,
-		{
-			enableHighAccuracy: true,
-			timeout: 20000
-		}
-	);
-
-	const geoFailure = (err) => {
-		console.log(err);
-		setLocationInfo({ error: err.message });
-	};
 
 	const navigation = useNavigation();
 
-	useEffect(() => {
-		try {
-			var config = {
-				method: 'get',
-				url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=bar&location=${locationInfo.latitude}%2C${locationInfo.longitude}&radius=3000&key=AIzaSyAi2tanlhLgqPbw8j-0lQ1zNCerLz59IZg`,
-				headers: {}
-			};
-			axios(config)
-				.then(function (response) {
-					//console.log(response);
-					let stringified = JSON.stringify(response.data);
-					let parsed = JSON.parse(stringified);
-					//console.log(parsed);
-					setEstablishments(parsed);
 
-					/*console.log(
-						'--------------------------------------------------------------------------'
-					);
-					console.log(
-						establishments
-						//.results[0].geometry.location.lat
-					);*/
-				})
-				.catch(function (error) {
-					console.log(error);
-				});
-		} catch (e) {
-			console.log(e);
-		}
-	}, []);
 
 	const mapRef = React.createRef();
 
-	if (establishments) {
+	if (Array.isArray(nearbyBars) && nearbyBars.length) {
 		return (
 			<View style={{ flex: 1 }}>
 				<GooglePlacesAutocomplete
@@ -99,16 +39,17 @@ export default function MapScreen() {
 					}}
 					onPress={(data, details = null) => {
 						// 'details' is provided when fetchDetails = true
-						/*let stringified = JSON.stringify(data);
+						let stringified = JSON.stringify(data);
 						let parsed = JSON.parse(stringified);
-
+						let newBar = [parsed];
 						console.log(parsed.place_id);
-						navigation.navigate('BarInfo', {
-							uuid: parsed.place_id
-						});*/
+						navigation.navigate('Map', {
+							locationInfo: { locationInfo },
+							nearbyBars: { newBar }
+						});
 					}}
 					query={{
-						key: 'AIzaSyADaQtqQonJgl5UGWltQxWWU9qSYnK1EFM',
+						key: 'AIzaSyAi2tanlhLgqPbw8j-0lQ1zNCerLz59IZg',
 						language: 'en',
 						components: 'country:us',
 						radius: 5000,
@@ -137,14 +78,13 @@ export default function MapScreen() {
 					showsUserLocation={true}
 					provider="google"
 				>
-					{establishments.results.map((item, index) => {
+					{nearbyBars.map((item, index) => {
 						return (
 							<Marker
 								key={index}
-								opacity={barOpacity}
 								coordinate={{
-									latitude: item.geometry.location.lat,
-									longitude: item.geometry.location.lng
+									latitude: item.location.lat,
+									longitude: item.location.lng
 								}}
 								onPress={() =>
 									navigation.navigate('Bar Information', {
