@@ -85,7 +85,7 @@ const musicAttributes: ICheckboxButton[] = [
     style: styles.verticalStyle,
     iconImageStyle: styles.iconImageStyle,
   },
-	{
+  {
     id: 3,
     text: "EDM",
     fillColor: "#009292",
@@ -128,7 +128,7 @@ const VibesAttributes: ICheckboxButton[] = [
     style: styles.verticalStyle,
     iconImageStyle: styles.iconImageStyle,
   },
-	{
+  {
     id: 3,
     text: "Live Music",
     fillColor: "#009292",
@@ -138,7 +138,7 @@ const VibesAttributes: ICheckboxButton[] = [
     style: styles.verticalStyle,
     iconImageStyle: styles.iconImageStyle,
   },
-	{
+  {
     id: 4,
     text: "Resturant",
     fillColor: "#009292",
@@ -148,7 +148,7 @@ const VibesAttributes: ICheckboxButton[] = [
     style: styles.verticalStyle,
     iconImageStyle: styles.iconImageStyle,
   },
-	{
+  {
     id: 5,
     text: "College",
     fillColor: "#009292",
@@ -158,7 +158,7 @@ const VibesAttributes: ICheckboxButton[] = [
     style: styles.verticalStyle,
     iconImageStyle: styles.iconImageStyle,
   },
-	{
+  {
     id: 6,
     text: "Classy",
     fillColor: "#009292",
@@ -169,20 +169,20 @@ const VibesAttributes: ICheckboxButton[] = [
     iconImageStyle: styles.iconImageStyle,
   }
 ];
-const FiltersScreen = () => {
-	const [checkboxState, setCheckboxState] = useState({
-		line: null,
-		music: null,
-		covid: null,
-		vibes: null
-	});
-	const carouselRef = useRef(null);
-	const navigation = useNavigation();
-	console.log(checkboxState);
+const FiltersScreen = (props) => {
+  const [checkboxState, setCheckboxState] = useState({
+    line: null,
+    music: null,
+    covid: null,
+    vibes: null
+  });
+  const carouselRef = useRef(null);
+  const navigation = useNavigation();
+  console.log(checkboxState);
 
-	return (
-		<ScrollView style={{ flex: 1 }}>
-			<View style={{ marginTop: 24, backgroundColor: '#009292', width: '100%', padding: 10 }}>
+  return (
+    <ScrollView style={{ flex: 1 }}>
+      <View style={{ marginTop: 24, backgroundColor: '#009292', width: '100%', padding: 10 }}>
         <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16, textAlign: 'center', fontWeight: 'bold' }}>
           Select from the filters!
         </Text>
@@ -204,15 +204,15 @@ const FiltersScreen = () => {
           style={{ flexDirection: "column" }}
           onChange={(selectedItem: ICheckboxButton) => {
 
-						setCheckboxState({
-							line: selectedItem.text,
-							music: checkboxState.music,
-							vibes: checkboxState.vibes,
-						});
+            setCheckboxState({
+              line: selectedItem.text,
+              music: checkboxState.music,
+              vibes: checkboxState.vibes,
+            });
           }}
         />
       </View>
-			<View style={{ marginLeft: 32, marginTop: 24 }}>
+      <View style={{ marginLeft: 32, marginTop: 24 }}>
         <Text style={{ color: "#a8a8ac", fontWeight: "500", fontSize: 16 }}>
           Music Attributes
         </Text>
@@ -229,15 +229,15 @@ const FiltersScreen = () => {
           style={{ flexDirection: "column" }}
           onChange={(selectedItem: ICheckboxButton) => {
 
-						setCheckboxState({
-							line: checkboxState.line,
-							music: selectedItem.text,
-							vibes: checkboxState.vibes,
-						});
+            setCheckboxState({
+              line: checkboxState.line,
+              music: selectedItem.text,
+              vibes: checkboxState.vibes,
+            });
           }}
         />
       </View>
-			<View style={{ marginLeft: 32, marginTop: 24 }}>
+      <View style={{ marginLeft: 32, marginTop: 24 }}>
         <Text style={{ color: "#a8a8ac", fontWeight: "500", fontSize: 16 }}>
           Vibe Attributes
         </Text>
@@ -254,24 +254,28 @@ const FiltersScreen = () => {
           style={{ flexDirection: "column" }}
           onChange={(selectedItem: ICheckboxButton) => {
 
-						setCheckboxState({
-							line: checkboxState.line,
-							music: checkboxState.music,
-							vibes: selectedItem.text,
-						});
+            setCheckboxState({
+              line: checkboxState.line,
+              music: checkboxState.music,
+              vibes: selectedItem.text,
+            });
           }}
         />
       </View>
-					<View style={{marginTop: 30, marginBottom: 40, alignItems: 'center'}}>
-						<Pressable
-						style={{padding: 10, backgroundColor: '#009292', width: '50%'}}
-						onPress={() => submitAttributes()}
-					>
-						<Text style={{textAlign: 'center', color: '#ffffff', fontSize: 18, fontWeight: 'bold'}}>Submit</Text>
-					</Pressable>
-				</View>
+      <View style={{ marginTop: 30, marginBottom: 40, alignItems: 'center' }}>
+        <Pressable
+          style={{ padding: 10, backgroundColor: '#009292', width: '50%' }}
+          onPress={() =>
+            navigation.navigate('BarCarouselScreen', {
+              locationInfo: props.locationInfo,
+              checkBoxState: checkboxState
+            })}
+        >
+          <Text style={{ textAlign: 'center', color: '#ffffff', fontSize: 18, fontWeight: 'bold' }}>Submit</Text>
+        </Pressable>
+      </View>
     </ScrollView>
-	);
+  );
 };
 
 export default FiltersScreen;

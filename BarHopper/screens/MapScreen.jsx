@@ -43,7 +43,7 @@ export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, s
 		}
 	});
 
-
+	const navigation = useNavigation();
 	if (Array.isArray(nearbyBars) && nearbyBars.length) {
 		return (
 			<View style={{ flex: 1 }}>

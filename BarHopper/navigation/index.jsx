@@ -28,6 +28,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import IamHereScreenScreen from '../screens/IamHereScreen';
+import BarCarouselScreen from '../screens/BarCarouselScreen';
 // import LinkingConfiguration from './LinkingConfiguration';
 
 export default function Navigation({ colorScheme, locationInfo, nearbyBars }) {
@@ -75,6 +76,7 @@ function RootNavigator({ locationInfo, nearbyBars }) {
 					component={NotificationsScreen}
 				/>
 				<Stack.Screen name="I am Here" component={IamHereScreenScreen} />
+				<Stack.Screen name="BarCarouselScreen" component={BarCarouselScreen} />
 			</Stack.Group>
 		</Stack.Navigator>
 	);
@@ -126,7 +128,7 @@ function BottomTabNavigator({ locationInfo, nearbyBars }) {
 			/>
 			<BottomTab.Screen
 				name="Filters"
-				component={FiltersScreen}
+				children={() => <FiltersScreen locationInfo={locationInfo} />}
 				options={{
 					title: 'Filters',
 					tabBarIcon: ({ color, size }) => (
