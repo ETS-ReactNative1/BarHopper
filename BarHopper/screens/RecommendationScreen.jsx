@@ -67,8 +67,9 @@ export default function RecommendationScreen({ navigation }) {
 		} catch (e) {
 			console.log(e);
 		}
-	}, []);
+	}, [locationInfo]);
 
+	console.log(shortLineBars);
 	useEffect(() => {
 		console.log('Calling nearBy useEffect');
 		try {
@@ -93,7 +94,7 @@ export default function RecommendationScreen({ navigation }) {
 		} catch (e) {
 			console.log(e);
 		}
-	}, []);
+	}, [locationInfo]);
 
 	useEffect(() => {
 		console.log('Calling contry useEffect');
@@ -120,9 +121,9 @@ export default function RecommendationScreen({ navigation }) {
 		} catch (e) {
 			console.log(e);
 		}
-	}, []);
+	}, [locationInfo]);
 
-	if(nearbyBars.length !== 0 || shortLineBars.length !== 0 || countryBars.length !== 0){
+	if (nearbyBars.length !== 0 || shortLineBars.length !== 0 || countryBars.length !== 0) {
 
 		return (
 
