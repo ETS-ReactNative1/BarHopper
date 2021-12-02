@@ -69,7 +69,7 @@ export default function RecommendationScreen({ navigation }) {
 		}
 	}, [locationInfo]);
 
-	console.log(shortLineBars);
+
 	useEffect(() => {
 		console.log('Calling nearBy useEffect');
 		try {
