@@ -18,6 +18,18 @@ export default function MapScreen({ locationInfo, nearbyBars, setLocationInfo, s
 		longitudeDelta: 0.0421
 	});
 
+	useEffect(() => {
+		try {
+			setRegion({
+				latitude: locationInfo.latitude, longitude: locationInfo.longitude, latitudeDelta: 0.0922,
+				longitudeDelta: 0.0421
+			})
+
+		} catch (e) {
+			console.log(e);
+		}
+	}, [locationInfo]);
+
 
 	var [searched, setSearched] = React.useState({
 		didSearch: false,
